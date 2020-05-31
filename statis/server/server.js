@@ -35,7 +35,6 @@ module.exports = class Server {
   }
 
   startWss () {
-    console.log('Starting wss')
     wss = new WebSocket.Server({ port: this.portWs })
     wss.on('connection', ws => {
       this.users.push(ws)

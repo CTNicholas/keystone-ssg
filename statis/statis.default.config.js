@@ -6,9 +6,17 @@ module.exports = {
   watched: [
     'templates',
     'pages',
-    'assets'
+    'assets',
+    'src'
   ],
   port: port,
   portWs: port + 1,
-  disconnectReloadTime: 2000
+  cwd: process.cwd(),
+  disconnectReloadTime: 2000,
+  plugins: [
+    {
+      filetype: ['scss'],
+      
+    }
+  ]
 }

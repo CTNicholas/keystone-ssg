@@ -10,5 +10,7 @@ const DEV_SERVER = process.argv.includes('--dev')
 console.log('Dev?', DEV_SERVER)
 
 if (DEV_SERVER) {
-  require('./server/run-server.js')
+  require('./run-dev.js')
+} else {
+  require('./run-build.js')
 }

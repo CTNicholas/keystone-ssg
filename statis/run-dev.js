@@ -1,24 +1,22 @@
-const config = require('../config.js')
-const path = require('path')
+const config = require('./config.js')
 const chokidar = require('chokidar')
-const Server = require('./server.js')
+const Server = require('./server/server.js')
 
 const devServer = new Server()
 
-// const watchedDirs = config.watched.map(dir => path.resolve(process.cwd(), dir))
 const watchSettings = {
   ignored: /(^|[/\\])\../, // ignore dotfiles
   ignoreInitial: true,
-  cwd: process.cwd()
+  cwd: config.cwd
 }
 
-const reload = debounce(function () {
+const reloadDevServer = debounce(function () {
   devServer.reload()
 }, 100)
 
 chokidar.watch(config.watched, watchSettings).on('all', (event, path) => {
   console.log(event, path, 'changed')
-  reload()
+  reloadDevServer()
 })
 
 function debounce (func, wait, immediate) {
