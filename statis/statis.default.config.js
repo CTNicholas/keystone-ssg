@@ -4,12 +4,12 @@ var sass = require('node-sass')
 const runSass = {
   input: ['.scss', '.sass'],
   output: '.css',
-  run ({ inputPath, outputPath }) {
+  run ({ inputContent, outputPath }) {
     return sass.renderSync({
-      file: inputPath,
+      data: inputContent,
       outFile: outputPath,
       outputStyle: 'compressed'
-    })
+    }).css
   }
 }
 
@@ -27,7 +27,8 @@ module.exports = {
   portWs: port + 1,
   cwd: process.cwd(),
   disconnectReloadTime: 2000,
-  plugin: [
+  reloadDebounce: 150,
+  plugins: [
     runSass
   ]
 }

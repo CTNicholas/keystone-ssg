@@ -9,11 +9,14 @@ const DEV_SERVER = process.argv.includes('--dev')
 
 console.log('Dev?', DEV_SERVER)
 
-require('./run-build.js')
+const runBuild = require('./run-build.js')
+runBuild()
+
 if (DEV_SERVER) {
   require('./run-dev.js')
 }
 
+/*
 var sass = require('node-sass')
 
 var result = sass.renderSync({
@@ -30,3 +33,4 @@ fs.writeFile('./templates/test.css', result.css, function (err) {
   if (err) throw err
   console.log('Saved!')
 })
+*/

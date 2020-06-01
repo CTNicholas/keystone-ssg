@@ -1,4 +1,5 @@
 const config = require('../config.js')
+const serverLog = require('../server-log.js')
 const express = require('express')
 const app = express()
 
@@ -30,7 +31,7 @@ module.exports = class Server {
       }), (req, res, next) => {
         next()
       })
-      this.server = app.listen(this.port, () => console.log(`Example app listening at http://localhost:${this.port}`))
+      this.server = app.listen(this.port, () => serverLog.serverRunning(this.port))
     }
   }
 
@@ -59,7 +60,6 @@ module.exports = class Server {
 
   refresh () {
     if (config.watch) {
-      console.log('Refreshing')
       wss.clients.forEach(function each (client) {
         if (client.readyState === WebSocket.OPEN) {
           client.send('refresh')
