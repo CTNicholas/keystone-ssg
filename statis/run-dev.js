@@ -13,17 +13,29 @@ const watchSettings = {
 }
 
 let fileChanges = {}
+let building = false
 
 const reloadDevServer = debounce(function () {
-  serverLog.fileChange(fileChanges)
+  console.log('NEW RELOAD')
+  if (fileChanges) {
+    serverLog.fileChange(fileChanges)
+  }
   fileChanges = {}
-  // runBuild()
-  devServer.reload()
+  building = true
+  console.log('BUILD START')
+  runBuild()
+  console.log('BUILD DONE')
+  devServer.reload().then(() => {
+    console.log('RELOAD DONE')
+    building = false
+  })
 }, config.reloadDebounce)
 
 chokidar.watch(config.watched, watchSettings).on('all', (event, path) => {
-  fileChanges[Object.keys(fileChanges).length + 1 + '.'] = { File: path, Event: event }
-  reloadDevServer()
+  if (!building) {
+    fileChanges[Object.keys(fileChanges).length + 1 + '.'] = { File: path, Event: event }
+    reloadDevServer()
+  }
 })
 
 function debounce (func, wait, immediate) {

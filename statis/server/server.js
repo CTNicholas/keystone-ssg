@@ -12,10 +12,11 @@ module.exports = class Server {
     this.portWs = portWs
     this.server = undefined
     this.users = []
-    this.start()
-    if (config.watch) {
-      this.startWss()
-    }
+    this.start().then(() => {
+      if (config.watch) {
+        this.startWss()
+      }
+    })
   }
 
   start () {
@@ -31,8 +32,16 @@ module.exports = class Server {
       }), (req, res, next) => {
         next()
       })
-      this.server = app.listen(this.port, () => serverLog.serverRunning(this.port))
+      return new Promise((resolve, reject) => {
+        this.server = app.listen(this.port, () => {
+          serverLog.serverRunning(this.port)
+          resolve()
+        })
+      })
     }
+    return new Promise((resolve, reject) => {
+      reject(new Error('No server'))
+    })
   }
 
   startWss () {
@@ -55,7 +64,7 @@ module.exports = class Server {
   reload () {
     this.refresh()
     this.stop()
-    this.start()
+    return this.start()
   }
 
   refresh () {
