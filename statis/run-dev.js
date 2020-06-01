@@ -16,18 +16,15 @@ let fileChanges = {}
 let building = false
 
 const reloadDevServer = debounce(function () {
-  console.log('NEW RELOAD')
   if (fileChanges) {
     serverLog.fileChange(fileChanges)
   }
   fileChanges = {}
   building = true
-  console.log('BUILD START')
-  runBuild()
-  console.log('BUILD DONE')
-  devServer.reload().then(() => {
-    console.log('RELOAD DONE')
-    building = false
+  runBuild().then(() => {
+    devServer.reload().then(() => {
+      building = false
+    })
   })
 }, config.reloadDebounce)
 
@@ -38,22 +35,16 @@ chokidar.watch(config.watched, watchSettings).on('all', (event, path) => {
   }
 })
 
-function debounce (func, wait, immediate) {
-  var timeout
-  return function () {
+function debounce (func, wait) {
+  let run = true
+  return function (...args) {
     const context = this
-    const args = arguments
-    var later = function () {
-      timeout = null
-      if (!immediate) {
-        func.apply(context, args)
-      }
-    }
-    var callNow = immediate && !timeout
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-    if (callNow) {
+    if (run) {
+      run = false
       func.apply(context, args)
+      setTimeout(() => {
+        run = true
+      }, wait)
     }
   }
 }

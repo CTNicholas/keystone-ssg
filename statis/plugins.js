@@ -25,10 +25,10 @@ module.exports = function (file) {
     })
     const newPath = path.join(fileObj.dir, fileObj.name + plugin.output)
     if (result) {
-      console.log('Writing', newPath)
+      console.log('Writing', newPath, new Date().getTime())
       fs.writeFileSync(newPath, result)
     }
-    console.log('Written')
+    console.log('Written', new Date().getTime())
     return newPath
   }
 }
