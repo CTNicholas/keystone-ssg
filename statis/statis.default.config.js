@@ -33,6 +33,7 @@ module.exports = {
     'templates',
     'pages',
     'assets',
+    'components',
     'src'
   ],
   port: port,

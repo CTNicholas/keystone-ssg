@@ -5,6 +5,9 @@ const getEnv = (argKey, envKey) => {
   )
 }
 
+// console.log(module.children)
+console.log(Object.keys(require.cache))
+
 const state = require('./state.js')
 const runBuild = require('./run-build.js')
 
@@ -14,6 +17,9 @@ if (process.argv.includes('--dev')) {
   state.mode = 'build'
 }
 console.log('Mode?', state.mode)
+
+console.log(module)
+// console.log(Object.keys(require.cache))
 
 runBuild()
 
@@ -38,4 +44,31 @@ fs.writeFile('./templates/test.css', result.css, function (err) {
   if (err) throw err
   console.log('Saved!')
 })
+*/
+
+/* 
+const rollup = require('rollup')
+
+const inputOptions = {
+  input: 'testing/testimport.js'
+}
+
+const outputOptions = {
+  format: 'umd',
+  name: 'statis'
+}
+
+async function build () {
+  // create a bundle
+  try {
+    const bundle = await rollup.rollup(inputOptions)
+    return bundle.generate(outputOptions)
+  } catch (err) {
+    if (err) throw err
+    console.log('err')
+  }
+}
+
+build().then(bundle => console.log(bundle.output)).catch(console.log)
+
 */

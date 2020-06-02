@@ -11,6 +11,7 @@ const devScript = require('./dev-script.js')
 
 module.exports = function () {
   console.log('Building..')
+  fs.emptyDirSync('public')
 
   return new Promise((resolve, reject) => {
     recursive(config.build, (err, files) => {
@@ -32,7 +33,7 @@ module.exports = function () {
         const fileContent = fs.readFileSync(filePath, 'utf-8')
 
         const newFile = plugins(fileContent, fileObj, filePath)
-        const finalFileContent = addDevScript(compile(newFile.fileContent))
+        const finalFileContent = addDevScript(compile(newFile))
 
         const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
         const finalPath = getFileLocation(newPath)

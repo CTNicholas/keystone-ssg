@@ -1,15 +1,38 @@
 const path = require('path')
 
 const dirFuncs = {
-  pages: pagesLocation
+  '.html': {
+    pages: pagesLocation
+  },
+  '.css': {
+    style: styleLocation
+  },
+  '.js': {
+    script: scriptLocation
+  }
 }
 
 module.exports = function (filePath) {
   const fileObj = path.parse(filePath)
   const dirName = fileObj.dir.split(path.sep)[0]
+  console.log('PLSSSS', fileObj.ext)
   console.log('dir', dirName, filePath)
-  if (Object.keys(dirFuncs).includes(dirName)) {
-    return dirFuncs[dirName](filePath, fileObj)
+  switch (fileObj.ext) {
+    case '.html':
+      return doHtml(filePath, fileObj, dirName)
+      break
+    case '.js':
+      return scriptLocation(filePath, fileObj)
+      break
+    case '.css':
+      return styleLocation(filePath, fileObj)
+      break
+  }
+}
+
+function doHtml (filePath, fileObj, dirName) {
+  if (Object.keys(dirFuncs[fileObj.ext]).includes(dirName)) {
+    return dirFuncs[fileObj.ext][dirName](filePath, fileObj)
   } else {
     return false
   }
@@ -29,3 +52,12 @@ function pagesLocation (filePath, fileObj) {
   }
   return 'err/' + fileObj.base
 }
+
+function styleLocation (filePath, fileObj) {
+  return path.join('css', fileObj.base)
+}
+
+function scriptLocation (filePath, fileObj) {
+  return path.join('js', fileObj.base)
+}
+
