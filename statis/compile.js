@@ -1,4 +1,4 @@
-const fs = require('fs')
+const fs = require('fs-extra')
 const plugins = require('./plugins.js')
 const path = require('path')
 

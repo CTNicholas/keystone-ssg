@@ -1,11 +1,12 @@
 const config = require('./config')
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 const recursive = require('recursive-readdir')
 const plugins = require('./plugins.js')
 const compile = require('./compile.js')
 const state = require('./state.js')
 const getFileLocation = require('./file-location.js')
+const writeFile = require('./write-file.js')
 const devScript = require('./dev-script.js')
 
 module.exports = function () {
@@ -36,7 +37,8 @@ module.exports = function () {
         const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
         const finalPath = getFileLocation(newPath)
         console.log('FINALPATH', finalPath, newPath)
-        fs.writeFileSync(finalPath, finalFileContent)
+
+        writeFile(finalPath, finalFileContent)
         console.log('File written!')
 
         filePath = filePath.split(path.sep).slice(baseDirs).join(path.sep)
@@ -50,10 +52,10 @@ module.exports = function () {
 function addDevScript (fileContent) {
   if (state.mode === 'dev') {
     let addedScript = false
-    return fileContent.replace('</head>', () => {
+    return fileContent.replace('</body>', () => {
       if (!addedScript) {
         addedScript = true
-        return devScript + '</head>'
+        return devScript + '</body>'
       }
     })
   }

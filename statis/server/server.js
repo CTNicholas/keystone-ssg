@@ -52,6 +52,7 @@ module.exports = class Server {
   startWss () {
     wss = new WebSocket.Server({ port: this.portWs })
     wss.on('connection', ws => {
+      console.log('User connected')
       this.users.push(ws)
       ws.on('message', message => {
         console.log('Message:', message)
@@ -67,9 +68,8 @@ module.exports = class Server {
   }
 
   reload () {
-    this.refresh()
     this.stop()
-    return this.start()
+    return this.start().then(this.refresh())
   }
 
   refresh () {

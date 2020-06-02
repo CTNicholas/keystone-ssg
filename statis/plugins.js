@@ -1,7 +1,7 @@
 const config = require('./config')
 const state = require('./state.js')
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 
 module.exports = function (fileContent, fileObj, filePath) {
   return runPlugins(filePath, fileObj) || filePath
