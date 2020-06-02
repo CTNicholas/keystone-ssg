@@ -5,6 +5,7 @@ const recursive = require('recursive-readdir')
 const plugins = require('./plugins.js')
 const compile = require('./compile.js')
 const state = require('./state.js')
+const getFileLocation = require('./file-location.js')
 const devScript = require('./dev-script.js')
 
 module.exports = function () {
@@ -32,8 +33,10 @@ module.exports = function () {
         const newFile = plugins(fileContent, fileObj, filePath)
         const finalFileContent = addDevScript(compile(newFile.fileContent))
 
-        const newPath = path.join(fileObj.dir, newFile.fileName)
-        fs.writeFileSync(newPath, finalFileContent)
+        const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
+        const finalPath = getFileLocation(newPath)
+        console.log('FINALPATH', finalPath, newPath)
+        fs.writeFileSync(finalPath, finalFileContent)
         console.log('File written!')
 
         filePath = filePath.split(path.sep).slice(baseDirs).join(path.sep)

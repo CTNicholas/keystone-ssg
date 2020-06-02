@@ -3,7 +3,8 @@ const plugins = require('./plugins.js')
 const path = require('path')
 
 const compileTypes = {
-  file: addPartial
+  import: addImport,
+  path: addPath
 }
 
 module.exports = function (fileContent) {
@@ -25,12 +26,14 @@ function compiler (fileContent) {
       return match
     }
   })
-  console.log('FCCC', fileContent)
   return fileContent
 }
 
-function addPartial (filePath) {
-  console.log('pls')
+function addPath (filePath) {
+  return filePath
+}
+
+function addImport (filePath) {
   filePath = path.normalize(filePath)
   console.log(2, filePath)
   try {
