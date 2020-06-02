@@ -5,14 +5,19 @@ const getEnv = (argKey, envKey) => {
   )
 }
 
-const DEV_SERVER = process.argv.includes('--dev')
-
-console.log('Dev?', DEV_SERVER)
-
+const state = require('./state.js')
 const runBuild = require('./run-build.js')
+
+if (process.argv.includes('--dev')) {
+  state.mode = 'dev'
+} else {
+  state.mode = 'build'
+}
+console.log('Mode?', state.mode)
+
 runBuild()
 
-if (DEV_SERVER) {
+if (state.mode === 'dev') {
   require('./run-dev.js')
 }
 

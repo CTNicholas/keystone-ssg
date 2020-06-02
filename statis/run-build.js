@@ -4,6 +4,8 @@ const path = require('path')
 const recursive = require('recursive-readdir')
 const plugins = require('./plugins.js')
 const compile = require('./compile.js')
+const state = require('./state.js')
+const devScript = require('./dev-script.js')
 
 module.exports = function () {
   console.log('Building..')
@@ -23,12 +25,33 @@ module.exports = function () {
       baseDirs = baseDirs.length
       console.log('Compiling')
       for (let filePath of files) {
-        filePath = plugins(filePath)
-        const data = compile(filePath)
+        const fileObj = path.parse(filePath)
+        console.log(1, filePath)
+        const fileContent = fs.readFileSync(filePath, 'utf-8')
+
+        const newFile = plugins(fileContent, fileObj, filePath)
+        const finalFileContent = addDevScript(compile(newFile.fileContent))
+
+        const newPath = path.join(fileObj.dir, newFile.fileName)
+        fs.writeFileSync(newPath, finalFileContent)
+        console.log('File written!')
+
         filePath = filePath.split(path.sep).slice(baseDirs).join(path.sep)
-        console.log(filePath)
+        console.log('FP:', filePath)
       }
       resolve()
     })
   })
+}
+
+function addDevScript (fileContent) {
+  if (state.mode === 'dev') {
+    let addedScript = false
+    return fileContent.replace('</head>', () => {
+      if (!addedScript) {
+        addedScript = true
+        return devScript + '</head>'
+      }
+    })
+  }
 }

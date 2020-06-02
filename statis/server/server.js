@@ -44,6 +44,11 @@ module.exports = class Server {
     })
   }
 
+  error () {
+    console.log('Server error')
+    // TODO
+  }
+
   startWss () {
     wss = new WebSocket.Server({ port: this.portWs })
     wss.on('connection', ws => {

@@ -1,10 +1,11 @@
 const config = require('./config.js')
+const state = require('./state.js')
 const chokidar = require('chokidar')
 const Server = require('./server/server.js')
 const serverLog = require('./server-log.js')
 const runBuild = require('./run-build.js')
 
-const devServer = new Server()
+state.devServer = new Server()
 
 const watchSettings = {
   ignored: /(^|[/\\])\../, // ignore dotfiles
@@ -22,7 +23,7 @@ const reloadDevServer = debounce(function () {
   fileChanges = {}
   building = true
   runBuild().then(() => {
-    devServer.reload().then(() => {
+    state.devServer.reload().then(() => {
       building = false
     })
   })
@@ -37,11 +38,11 @@ chokidar.watch(config.watched, watchSettings).on('all', (event, path) => {
 
 function debounce (func, wait) {
   let run = true
-  return function (...args) {
+  return function () {
     const context = this
     if (run) {
       run = false
-      func.apply(context, args)
+      func.apply(context)
       setTimeout(() => {
         run = true
       }, wait)

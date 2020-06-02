@@ -1,7 +1,8 @@
 const port = 8080
 var sass = require('node-sass')
+var babel = require('@babel/core')
 
-const runSass = {
+const sassPlugin = {
   input: ['.scss', '.sass'],
   output: '.css',
   run ({ inputContent, outputPath }) {
@@ -10,6 +11,17 @@ const runSass = {
       outFile: outputPath,
       outputStyle: 'compressed'
     }).css
+  }
+}
+
+const babelPlugin = {
+  input: '.js',
+  output: '.js',
+  run ({ inputContent }) {
+    return babel.transformSync(inputContent, {
+      minified: true,
+      presets: ['@babel/preset-env']
+    }).code
   }
 }
 
@@ -29,6 +41,7 @@ module.exports = {
   disconnectReloadTime: 2000,
   reloadDebounce: 150,
   plugins: [
-    runSass
+    sassPlugin,
+    babelPlugin
   ]
 }
