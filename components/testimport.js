@@ -1,3 +1,6 @@
 export default {
-	fruit: 'lemon'
+	fruit: 'lemon',
+	funcName: a => {
+	  return a * a
+	}
 }

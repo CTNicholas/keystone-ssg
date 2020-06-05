@@ -1,4 +1,5 @@
 module.exports = {
   mode: '',
-  devServer: {}
+  devServer: {},
+  filesBuilt: []
 }

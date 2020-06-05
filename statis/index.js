@@ -18,7 +18,7 @@ if (process.argv.includes('--dev')) {
 }
 console.log('Mode?', state.mode)
 
-console.log(module)
+// console.log(module)
 // console.log(Object.keys(require.cache))
 
 runBuild()
@@ -45,12 +45,32 @@ fs.writeFile('./templates/test.css', result.css, function (err) {
   console.log('Saved!')
 })
 */
-
-/* 
+/*
 const rollup = require('rollup')
+const babel = require('@rollup/plugin-babel')
+const buble = require('@rollup/plugin-buble')
+const scss = require('rollup-plugin-scss')
 
+// const fs = require('fs-extra')
+// const fil = fs.readFileSync('components/testindex.js', 'utf-8')
+// console.log('FILE:', babel.babel, 'BUBLE', buble, fil)
+
+let theCss
 const inputOptions = {
-  input: 'testing/testimport.js'
+  input: 'components/style.scss',
+  plugins: [
+    babel.babel({
+      babelHelpers: 'bundled',
+      minified: true,
+      presets: ['@babel/preset-env']
+    }),
+    scss({
+      outputStyle: 'compressed',
+      output (styles) {
+        theCss = styles
+      }
+    })
+  ]
 }
 
 const outputOptions = {
@@ -69,6 +89,9 @@ async function build () {
   }
 }
 
-build().then(bundle => console.log(bundle.output)).catch(console.log)
-
+build().then(bundle => {
+  console.log(bundle.output[0])
+  console.log(bundle.output[0].code)
+  console.log('STYLE', theCss)
+}).catch(console.log)
 */

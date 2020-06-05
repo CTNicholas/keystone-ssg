@@ -7,7 +7,7 @@ module.exports = function (fileContent, fileObj, filePath) {
   return runPlugins(filePath, fileObj) || filePath
 
   function runPlugins () {
-    for (const plugin of config.plugins) {
+    for (const plugin of config.prePlugins) {
       if (plugin.input === fileObj.ext || (typeof Array && plugin.input.includes(fileObj.ext))) {
         console.log('Plugin found:', plugin.input)
         return getPluginResult(plugin)

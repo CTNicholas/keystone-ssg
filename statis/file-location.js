@@ -20,13 +20,12 @@ module.exports = function (filePath) {
   switch (fileObj.ext) {
     case '.html':
       return doHtml(filePath, fileObj, dirName)
-      break
     case '.js':
       return scriptLocation(filePath, fileObj)
-      break
     case '.css':
       return styleLocation(filePath, fileObj)
-      break
+    default:
+      return path.join('public', 'err', fileObj.base)
   }
 }
 
@@ -54,10 +53,9 @@ function pagesLocation (filePath, fileObj) {
 }
 
 function styleLocation (filePath, fileObj) {
-  return path.join('css', fileObj.base)
+  return path.join('public', 'css', fileObj.base)
 }
 
 function scriptLocation (filePath, fileObj) {
-  return path.join('js', fileObj.base)
+  return path.join('public', 'js', fileObj.base)
 }
-

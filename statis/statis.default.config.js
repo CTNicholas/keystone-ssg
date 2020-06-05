@@ -41,8 +41,8 @@ module.exports = {
   cwd: process.cwd(),
   disconnectReloadTime: 2000,
   reloadDebounce: 150,
-  plugins: [
+  prePlugins: [
     sassPlugin,
-    babelPlugin
+    // babelPlugin
   ]
 }
