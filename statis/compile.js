@@ -11,31 +11,53 @@ const compileTypes = {
   style: addStyle
 }
 
-module.exports = function ({ fileContent, fileObj, fileName }) {
+module.exports = async function ({ fileContent, fileObj, fileName }) {
   return compiler(fileContent, fileObj, fileName)
 }
 
-function compiler (fileContent, fileObj, fileName) {
-  // console.log('before content:', fileContent)
+async function compiler (fileContent, fileObj, fileName) {
+  const asyncPromises = []
+  const asyncResults = []
   const varRegex = /<<([^<>]+)=([^<>]+)>>/igm
-  fileContent = fileContent.replace(varRegex, (match, p1, p2) => {
-    console.log('MATCHES', match, p1, p2)
-    const command = { func: p1.trim(), val: p2.trim() }
-    if (Object.keys(compileTypes).includes(command.func)) {
-      console.log('got f', command)
-      return compileTypes[command.func](command.val, fileObj, fileName) || match
-    } else {
-      return match
-    }
+  fileContent.replace(varRegex, (match, p1, p2) => {
+    // console.log('MATCHES', match, p1, p2)
+    asyncPromises.push(new Promise((resolve, reject) => {
+      console.log('push pls')
+      const command = { func: p1.trim(), val: p2.trim() }
+      if (Object.keys(compileTypes).includes(command.func)) {
+        compileTypes[command.func](command.val, fileObj, fileName).then(res => {
+          asyncResults.push(res || match)
+          resolve()
+          return match
+        })
+      } else {
+        asyncResults.push(match)
+        resolve()
+        return match
+      }
+    }))
   })
-  return fileContent
+
+  console.log('IN BETWEEN', asyncPromises)
+
+  return Promise.all(asyncPromises).then(() => {
+    let count = 0
+    console.log('Start promise')
+    const newFileContent = fileContent.replace(varRegex, (match, p1, p2) => {
+      console.log('count', count, asyncResults)
+      return asyncResults[count++]
+    })
+    return newFileContent
+  })
+
+  // return newFileContent
 }
 
-function addPath (filePath) {
+async function addPath (filePath) {
   return filePath
 }
 
-function addScript (filePath, fileObj) {
+async function addScript (filePath, fileObj) {
   // Need to runPlugins()
   const newPath = path.join('js', path.parse(filePath).name + '.js')
   const scriptContent = fs.readFileSync(filePath, 'utf-8')
@@ -49,11 +71,11 @@ function addScript (filePath, fileObj) {
   return '<script src="' + newPath + '"></script>'
 }
 
-function addStyle (filePath) {
+async function addStyle (filePath) {
   // Need to runPlugins()
   const newPath = path.join('css', path.parse(filePath).name + '.css')
   const scriptContent = fs.readFileSync(filePath, 'utf-8')
-  console.log('CONTEN', scriptContent)
+  // console.log('CONTEN', scriptContent)
   const publicPath = path.join('public', newPath)
   if (!alreadyCompiled(filePath)) {
     fs.ensureDirSync(path.join('public', 'css'))
@@ -62,18 +84,19 @@ function addStyle (filePath) {
   return '<link rel="stylesheet" href="' + newPath + '">'
 }
 
-function addImport (filePath) {
+async function addImport (filePath) {
   filePath = path.normalize(filePath)
-  console.log(2, filePath)
+  // console.log(2, filePath)
   try {
     if (fs.existsSync(filePath)) {
       console.log('exist')
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
-      const newFile = runRollup(fileContent, fileObj, filePath) // need to use then
-      console.log('sfagfd', newFile.fileContent)
-      newFile.fileContent = compiler(newFile.fileContent)
-      return newFile.fileContent // and return promise
+      const newFile = await runRollup(fileContent, fileObj, filePath) // need to use then
+      // console.log('sfagfd', newFile.fileContent)
+      // newFile.fileContent = await compiler(newFile.fileContent)
+      newFile.fileContent = await compiler(newFile.fileContent)
+      return await newFile.fileContent // and return promise
     } else {
       return false
     }
@@ -84,5 +107,5 @@ function addImport (filePath) {
 }
 
 function alreadyCompiled (filePath) {
-  return state.filesBuilt.includes(filePath)
+  return state.filesBuilt.includes(path.normalize(filePath))
 }

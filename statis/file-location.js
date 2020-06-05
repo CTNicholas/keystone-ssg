@@ -15,8 +15,8 @@ const dirFuncs = {
 module.exports = function (filePath) {
   const fileObj = path.parse(filePath)
   const dirName = fileObj.dir.split(path.sep)[0]
-  console.log('PLSSSS', fileObj.ext)
-  console.log('dir', dirName, filePath)
+  // console.log('PLSSSS', fileObj.ext)
+  // console.log('dir', dirName, filePath)
   switch (fileObj.ext) {
     case '.html':
       return doHtml(filePath, fileObj, dirName)
@@ -40,12 +40,12 @@ function doHtml (filePath, fileObj, dirName) {
 function pagesLocation (filePath, fileObj) {
   if (fileObj.ext === '.html') {
     const fileSplit = fileObj.dir.split(path.sep).length > 1 ? fileObj.dir.split(path.sep).slice(1).join(path.sep) : ''
-    console.log('FSPLIT', fileSplit)
+    // console.log('FSPLIT', fileSplit)
     if (fileObj.base === 'index.html') {
-      console.log(path.join('public', fileSplit, fileObj.base))
+      // console.log(path.join('public', fileSplit, fileObj.base))
       return path.join('public', fileSplit, fileObj.base)
     } else {
-      console.log(path.join('public', fileSplit, fileObj.name, 'index.html'))
+      // console.log(path.join('public', fileSplit, fileObj.name, 'index.html'))
       return path.join('public', fileSplit, fileObj.name, 'index.html')
     }
   }

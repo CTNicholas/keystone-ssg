@@ -42,7 +42,7 @@ module.exports = {
   disconnectReloadTime: 2000,
   reloadDebounce: 150,
   prePlugins: [
-    sassPlugin,
+    // sassPlugin,
     // babelPlugin
   ]
 }

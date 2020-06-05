@@ -29,7 +29,9 @@ module.exports = function () {
 
       baseDirs = baseDirs.length
       console.log('Compiling')
-      for (let filePath of files) {
+      for (const filePath of files) {
+        buildFile(filePath)
+        /*
         state.filesBuilt.push(filePath)
         const fileObj = path.parse(filePath)
         // console.log(1, filePath)
@@ -51,19 +53,37 @@ module.exports = function () {
           filePath = filePath.split(path.sep).slice(baseDirs).join(path.sep)
           console.log('FP:', filePath)
         }).catch(console.log)
+        */
       }
       resolve()
     })
   })
 }
 
+async function buildFile (filePath) {
+  try {
+    state.filesBuilt.push(path.normalize(filePath))
+    const fileObj = path.parse(filePath)
+    const fileContent = fs.readFileSync(filePath, 'utf-8')
+    const newFile = await runRollup(fileContent, fileObj, filePath)
+    // console.warn('pls', filePath, newFile)
+    const finalFileContent = await compile(newFile, fileObj)
+    // console.log('HERE', finalFileContent)
+    const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
+    const finalPath = getFileLocation(newPath)
+    // console.warn('pls2222', filePath, finalFileContent)
+    writeFile(finalPath, addDevScript(finalFileContent))
+  } catch (err) { console.log(err) }
+}
+
 function addDevScript (fileContent) {
+  // console.log('FCCC', fileContent)
   if (state.mode === 'dev') {
     let addedScript = false
-    return fileContent.replace('</body>', () => {
+    return fileContent.replace('</head>', () => {
       if (!addedScript) {
         addedScript = true
-        return devScript + '</body>'
+        return devScript + '</head>'
       }
     })
   }
