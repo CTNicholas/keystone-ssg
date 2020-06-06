@@ -1,11 +1,12 @@
 const rollup = require('rollup')
 const defaultPlugins = require('./config.rollup.js')
+const logError = require('./log-error.js')
 
 module.exports = function (fileContent, fileObj, filePath) {
   if (fileObj.ext === '.html') {
     return new Promise((resolve, reject) => {
       resolve({ fileContent: fileContent, fileName: fileObj.base })
-    }).catch(console.log)
+    }).catch(logError)
   }
 
   let result
@@ -39,8 +40,7 @@ module.exports = function (fileContent, fileObj, filePath) {
       const bundle = await rollup.rollup(inputOptions)
       return bundle.generate(outputOptions)
     } catch (err) {
-      if (err) throw err
-      console.log(err)
+      if (err) { logError(err) }
     }
   }
 }

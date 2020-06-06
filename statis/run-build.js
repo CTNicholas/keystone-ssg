@@ -2,13 +2,14 @@ const config = require('./config')
 const fs = require('fs-extra')
 const path = require('path')
 const recursive = require('recursive-readdir')
-const plugins = require('./plugins.js')
+// const plugins = require('./plugins.js')
 const runRollup = require('./run-rollup')
 const compile = require('./compile.js')
 const state = require('./state.js')
 const getFileLocation = require('./file-location.js')
 const writeFile = require('./write-file.js')
 const devScript = require('./dev-script.js')
+const logError = require('./log-error.js')
 
 module.exports = function () {
   console.log('Building..')
@@ -20,7 +21,6 @@ module.exports = function () {
       if (err) {
         reject(err)
       }
-      console.log('Pages: ', files)
       for (const filePath of files) {
         buildFile(filePath)
       }
@@ -39,7 +39,7 @@ async function buildFile (filePath) {
     const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
     const finalPath = getFileLocation(newPath)
     writeFile(finalPath, addDevScript(finalFileContent))
-  } catch (err) { console.log(err) }
+  } catch (err) { logError(err) }
 }
 
 function addDevScript (fileContent) {

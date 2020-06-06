@@ -1,28 +1,23 @@
+const chalk = require('chalk')
+
 module.exports = {
   fileChange,
-  serverRunning
+  serverRunning,
+  divider
 }
 
 function fileChange (changes) {
   divider()
-  console.log('File changes')
-
-  console.log(changes)
-
-  // console.table(changes)
-
-  for (const change of changes) {
-    console.log(change)
-  }
-
-  console.log('Server reloading')
+  console.log('FILE CHANGES')
+  console.table(changes)
+  // console.log('Reloading...')
   divider()
 }
 
 function serverRunning (port) {
   setTimeout(() => {
     divider()
-    console.log(`Dev server running at http://localhost:${port}`)
+    console.log(chalk`{green Dev server running at {bold http://localhost:${port}}}\n`)
   }, 50)
 }
 

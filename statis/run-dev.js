@@ -2,8 +2,9 @@ const config = require('./config.js')
 const state = require('./state.js')
 const chokidar = require('chokidar')
 const Server = require('./server/server.js')
-const serverLog = require('./server-log.js')
+const serverLog = require('./log-server.js')
 const runBuild = require('./run-build.js')
+const logError = require('./log-error.js')
 
 state.devServer = new Server()
 
@@ -26,7 +27,7 @@ const reloadDevServer = debounce(function () {
     state.devServer.reload().then(() => {
       building = false
     })
-  })
+  }).catch(logError)
 }, config.reloadDebounce)
 
 chokidar.watch(config.watched, watchSettings).on('all', (event, path) => {

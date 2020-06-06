@@ -1,5 +1,6 @@
 const config = require('../config.js')
-const serverLog = require('../server-log.js')
+const state = require('../state.js')
+const serverLog = require('../log-server.js')
 const express = require('express')
 const app = express()
 
@@ -32,6 +33,11 @@ module.exports = class Server {
       }), (req, res, next) => {
         next()
       })
+
+      app.use(function (req, res) {
+        res.send(404, 'insert error page here')
+      })
+
       return new Promise((resolve, reject) => {
         this.server = app.listen(this.port, () => {
           serverLog.serverRunning(this.port)
@@ -73,7 +79,7 @@ module.exports = class Server {
   }
 
   refresh () {
-    if (config.watch) {
+    if (!state.error && config.watch) {
       wss.clients.forEach(function each (client) {
         if (client.readyState === WebSocket.OPEN) {
           client.send('refresh')

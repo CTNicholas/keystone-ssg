@@ -1,8 +1,9 @@
 const fs = require('fs-extra')
-const plugins = require('./plugins.js')
+// const plugins = require('./plugins.js')
 const runRollup = require('./run-rollup.js')
 const path = require('path')
 const state = require('./state.js')
+const logError = require('./log-error.js')
 
 const compileTypes = {
   import: addImport,
@@ -27,7 +28,7 @@ async function compiler (fileContent, fileObj, fileName) {
           asyncResults.push(res || match)
           resolve()
           return match
-        })
+        }).catch(logError)
       } else {
         asyncResults.push(match)
         resolve()
@@ -79,14 +80,14 @@ async function addImport (filePath) {
     if (fs.existsSync(filePath)) {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
-      const newFile = await runRollup(fileContent, fileObj, filePath) 
+      const newFile = await runRollup(fileContent, fileObj, filePath)
       newFile.fileContent = await compiler(newFile.fileContent)
       return await newFile.fileContent
     } else {
       return false
     }
   } catch (err) {
-    console.error(err)
+    logError(err)
     return false
   }
 }

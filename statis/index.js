@@ -15,12 +15,13 @@ if (process.argv.includes('--dev')) {
 }
 console.log('Mode?', state.mode)
 
-runBuild()
+runBuild().then(() => {
+  console.log('Built')
+})
 
 if (state.mode === 'dev') {
   require('./run-dev.js')
 }
-
 /*
 var sass = require('node-sass')
 

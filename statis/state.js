@@ -1,5 +1,6 @@
 module.exports = {
   mode: '',
   devServer: {},
-  filesBuilt: []
+  filesBuilt: [],
+  error: false
 }
