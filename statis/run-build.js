@@ -20,40 +20,9 @@ module.exports = function () {
       if (err) {
         reject(err)
       }
-      console.log(files, config.build)
-
-      let baseDirs = path.normalize(config.build).split(path.sep)
-      if (baseDirs[baseDirs.length - 1] === '') {
-        baseDirs = baseDirs.slice(0, -1)
-      }
-
-      baseDirs = baseDirs.length
-      console.log('Compiling')
+      console.log('Pages: ', files)
       for (const filePath of files) {
         buildFile(filePath)
-        /*
-        state.filesBuilt.push(filePath)
-        const fileObj = path.parse(filePath)
-        // console.log(1, filePath)
-        const fileContent = fs.readFileSync(filePath, 'utf-8')
-
-        // const newFile = plugins(fileContent, fileObj, filePath)
-        // const newFile = { fileContent, fileName: fileObj.base }
-        runRollup(fileContent, fileObj, filePath).then(newFile => {
-          console.log('ROLLUP:', newFile)
-          const finalFileContent = addDevScript(compile(newFile, fileObj))
-
-          const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
-          const finalPath = getFileLocation(newPath)
-          // console.log('FINALPATH', finalPath, newPath)
-
-          writeFile(finalPath, finalFileContent)
-          // console.log('File written!')
-
-          filePath = filePath.split(path.sep).slice(baseDirs).join(path.sep)
-          console.log('FP:', filePath)
-        }).catch(console.log)
-        */
       }
       resolve()
     })
@@ -66,18 +35,14 @@ async function buildFile (filePath) {
     const fileObj = path.parse(filePath)
     const fileContent = fs.readFileSync(filePath, 'utf-8')
     const newFile = await runRollup(fileContent, fileObj, filePath)
-    // console.warn('pls', filePath, newFile)
     const finalFileContent = await compile(newFile, fileObj)
-    // console.log('HERE', finalFileContent)
     const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
     const finalPath = getFileLocation(newPath)
-    // console.warn('pls2222', filePath, finalFileContent)
     writeFile(finalPath, addDevScript(finalFileContent))
   } catch (err) { console.log(err) }
 }
 
 function addDevScript (fileContent) {
-  // console.log('FCCC', fileContent)
   if (state.mode === 'dev') {
     let addedScript = false
     return fileContent.replace('</head>', () => {
@@ -86,5 +51,7 @@ function addDevScript (fileContent) {
         return devScript + '</head>'
       }
     })
+  } else {
+    return fileContent
   }
 }

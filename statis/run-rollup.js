@@ -2,7 +2,6 @@ const rollup = require('rollup')
 const defaultPlugins = require('./config.rollup.js')
 
 module.exports = function (fileContent, fileObj, filePath) {
-  console.log('START OF RUN ROLLUP', filePath)
   if (fileObj.ext === '.html') {
     return new Promise((resolve, reject) => {
       resolve({ fileContent: fileContent, fileName: fileObj.base })
@@ -32,7 +31,6 @@ module.exports = function (fileContent, fileObj, filePath) {
       finalCode = bundle.output[0].code
       finalName = fileObj.base
     }
-    // console.log('finalename', finalName)
     return { fileContent: finalCode, fileName: finalName }
   })
 

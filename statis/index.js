@@ -5,9 +5,6 @@ const getEnv = (argKey, envKey) => {
   )
 }
 
-// console.log(module.children)
-console.log(Object.keys(require.cache))
-
 const state = require('./state.js')
 const runBuild = require('./run-build.js')
 
@@ -17,9 +14,6 @@ if (process.argv.includes('--dev')) {
   state.mode = 'build'
 }
 console.log('Mode?', state.mode)
-
-// console.log(module)
-// console.log(Object.keys(require.cache))
 
 runBuild()
 
