@@ -19,7 +19,9 @@ module.exports = '<script src="https://unpkg.com/pill@1/dist/pill.min.js"></scri
 */
 
 const dynamicPageScript = `
-if (document.readyState === 'interactive' || document.readyState === 'complete') {
+
+if (document.readyState === 'interactive' ||
+    document.readyState === 'complete') {
   run()
 } else {
   document.addEventListener('DOMContentLoaded', () => {
@@ -29,17 +31,7 @@ if (document.readyState === 'interactive' || document.readyState === 'complete')
 
 function run () {
   watchLinks()
-}
-
-function linkClicked (event) {
-  if (location.host === event.target.host) {
-    event.preventDefault()
-    getPage(event.target.getAttribute('href')).then(newPage => {
-      document.open()
-      document.write(newPage)
-      document.close()
-    })
-  }
+  window.addEventListener('popstate', onPopState)
 }
 
 function watchLinks () {
@@ -49,14 +41,51 @@ function watchLinks () {
   }
 }
 
+function linkClicked (event) {
+  if (linkAllowed(event.target)) {
+    event.preventDefault()
+    getPage(event.target.getAttribute('href')).then(newPage => {
+      changePage(newPage, event.target.href)
+    })
+  }
+}
+
+function changePage (newPage, url, popstate = false) {
+  document.open()
+  document.write(newPage)
+  document.close()
+  updateHistory(url, popstate)
+}
+
+function updateHistory (url, popstate) {
+  if (!popstate) {
+    history.pushState(null, document.title, url)
+  } 
+}
+
+function onPopState (event) {
+  location.reload()
+  console.log('Current href', location.href, 'popping')
+
+  const lastUrl = location.href
+  getPage(lastUrl).then(newPage => {
+    changePage(newPage, lastUrl, true)
+  })
+}
+
+function linkAllowed (target) {
+  const sameHost = location.host === target.host
+  const notSamePage =
+    location.host + location.pathname + location.search !==
+    target.host + target.pathname + target.search
+  return sameHost && notSamePage
+}
+
 async function getPage (url) {
   try {
     return fetch(url)
       .then(response => response.text())
-      .catch(() => { 
-        console.log('CATCH')
-        window.location.replace(url)
-      })
+      .catch(() => console.log)
   } catch (err) { 
     console.log(err)
     window.location(url)

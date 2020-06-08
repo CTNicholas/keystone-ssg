@@ -3,6 +3,8 @@
     <title>Homepage</title>
     
 	
+<!-- STATIS: Dev server script below, run without --dev variable for production -->
+<script>!function(){!function e(){const o=new WebSocket("ws://localhost:8081/");let s=!1;o.onopen=(e=>{console.log("STATIS: Development server started"),s=!0});o.onmessage=(e=>{console.log("Message received:",e.data),"refresh"===e.data&&location.reload()});o.onclose=(o=>{1==s&&console.error("STATIS: Development server closed"),s=!1,setTimeout(e,2000)})}()}();</script>
 </head>
   <body>
   <h1>index</h1>
@@ -10,23 +12,43 @@
   <a href="/docs"> link to docsss </a>
   <a href="/docs/isntaller"> link to isntaller </a>
   <br>
-  <a href="//localhost:8080/docs">full (should work)</a>
+  <a href="//localhost:8080/docs">full (should work locally)</a>
   <br>
   <a href="docs">no slash (should work)</a>
   <br>
   <a href="//localhost/docs">no port (should fail)</a>
+  <br>
+  <a href="#hi">anchor link</a>
   
 this is a test
 	
 	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1><h1> I have been imported!</h1><h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	<h1> I have been imported!</h1>
+	
 	seems to be working greatsssssssssssssf
+	
+	<div id="hi">anchor goes here</div>
 	
 	<a href="https://google.co.uk">google link</a>
 
 </div>
 	
   <script>
-if (document.readyState === 'interactive' || document.readyState === 'complete') {
+
+if (document.readyState === 'interactive' ||
+    document.readyState === 'complete') {
   run()
 } else {
   document.addEventListener('DOMContentLoaded', () => {
@@ -36,36 +58,61 @@ if (document.readyState === 'interactive' || document.readyState === 'complete')
 
 function run () {
   watchLinks()
+  window.addEventListener('popstate', onPopState)
+}
+
+function watchLinks () {
+  const links = document.querySelectorAll('a')
+  for (const link of links) {
+    link.addEventListener('click', linkClicked)
+  }
 }
 
 function linkClicked (event) {
-  if (location.host === event.target.host) {
+  if (linkAllowed(event.target)) {
     event.preventDefault()
     getPage(event.target.getAttribute('href')).then(newPage => {
-      document.open()
-      document.write(newPage)
-      document.close()
+      changePage(newPage, event.target.href)
     })
   }
 }
 
-function watchLinks () {
-  console.log('Watching links')
-  const links = document.querySelectorAll('a')
-  for (const link of links) {
-    console.log('link', link)
-    link.addEventListener('click', linkClicked)
-  }
+function changePage (newPage, url, popstate = false) {
+  document.open()
+  document.write(newPage)
+  document.close()
+  updateHistory(url, popstate)
+}
+
+function updateHistory (url, popstate) {
+  if (!popstate) {
+    history.pushState(null, document.title, url)
+  } 
+}
+
+function onPopState (event) {
+  location.reload()
+  console.log('Current href', location.href, 'popping')
+
+  const lastUrl = location.href
+  getPage(lastUrl).then(newPage => {
+    changePage(newPage, lastUrl, true)
+  })
+}
+
+function linkAllowed (target) {
+  const sameHost = location.host === target.host
+  const notSamePage =
+    location.host + location.pathname + location.search !==
+    target.host + target.pathname + target.search
+  return sameHost && notSamePage
 }
 
 async function getPage (url) {
   try {
     return fetch(url)
       .then(response => response.text())
-      .catch(() => { 
-        console.log('CATCH')
-        window.location.replace(url)
-      })
+      .catch(() => console.log)
   } catch (err) { 
     console.log(err)
     window.location(url)
