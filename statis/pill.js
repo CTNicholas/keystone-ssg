@@ -43,10 +43,8 @@ function linkClicked (event) {
 }
 
 function watchLinks () {
-  console.log('Watching links')
   const links = document.querySelectorAll('a')
   for (const link of links) {
-    console.log('link', link)
     link.addEventListener('click', linkClicked)
   }
 }
