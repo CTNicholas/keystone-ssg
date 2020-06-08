@@ -28,7 +28,7 @@ async function compiler (fileContent, fileObj, fileName) {
           asyncResults.push(res || match)
           resolve()
           return match
-        }).catch(logError)
+        }).catch(error => logError(error, { name: fileName }))
       } else {
         asyncResults.push(match)
         resolve()
@@ -86,8 +86,8 @@ async function addImport (filePath) {
     } else {
       return false
     }
-  } catch (err) {
-    logError(err)
+  } catch (error) {
+    logError(error, { path: filePath })
     return false
   }
 }

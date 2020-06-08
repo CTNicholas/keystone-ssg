@@ -26,6 +26,7 @@ const babelPlugin = {
 }
 
 module.exports = {
+  dynamicLoad: true,
   build: 'pages',
   served: 'public',
   watch: true,

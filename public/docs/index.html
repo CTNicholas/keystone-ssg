@@ -1,2 +1,65 @@
+
+<html>
+<head><title>docstitle</title>
+</head>
+<body>
+<h1>docs</h1>
+<a href="/">link to home</a>
+<a href="/docs/isntaller">link to isntaller</a>
 WORDS
 more words here
+this is okay
+edit pls
+saaaaadsssvxcbaaaaafafa
+
+
+
+sampfasfg
+<script>
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  run()
+} else {
+  document.addEventListener('DOMContentLoaded', () => {
+    run()
+  })
+}
+
+function run () {
+  watchLinks()
+}
+
+function linkClicked (event) {
+  if (location.host === event.target.host) {
+    event.preventDefault()
+    getPage(event.target.getAttribute('href')).then(newPage => {
+      document.open()
+      document.write(newPage)
+      document.close()
+    })
+  }
+}
+
+function watchLinks () {
+  console.log('Watching links')
+  const links = document.querySelectorAll('a')
+  for (const link of links) {
+    console.log('link', link)
+    link.addEventListener('click', linkClicked)
+  }
+}
+
+async function getPage (url) {
+  try {
+    return fetch(url)
+      .then(response => response.text())
+      .catch(() => { 
+        console.log('CATCH')
+        window.location.replace(url)
+      })
+  } catch (err) { 
+    console.log(err)
+    window.location(url)
+  }
+}
+</script></body>
+</html>

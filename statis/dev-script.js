@@ -1,6 +1,6 @@
 const config = require('./config.js')
 
-module.exports = '<!-- STATIS: Dev server script, run without --dev variable for production -->\n<script>!function(){!function e(){const o=new WebSocket("ws://localhost:' +
+module.exports = '<!-- STATIS: Dev server script below, run without --dev variable for production -->\n<script>!function(){!function e(){const o=new WebSocket("ws://localhost:' +
 config.portWs + '/");let s=!1;o.onopen=(e=>{console.log("STATIS: Development server started"),s=!0});o.onmessage=(e=>{console.log("Message received:",e.data),"refresh"===e.data&&location.reload()});o.onclose=(o=>{1==s&&console.error("STATIS: Development server closed"),s=!1,setTimeout(e,' + 
 config.disconnectReloadTime + ')})}()}();</script>\n'
 

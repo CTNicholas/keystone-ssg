@@ -8,7 +8,7 @@ const compile = require('./compile.js')
 const state = require('./state.js')
 const getFileLocation = require('./file-location.js')
 const writeFile = require('./write-file.js')
-const devScript = require('./dev-script.js')
+const addScripts = require('./add-scripts.js')
 const logError = require('./log-error.js')
 
 module.exports = function () {
@@ -38,20 +38,7 @@ async function buildFile (filePath) {
     const finalFileContent = await compile(newFile, fileObj)
     const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
     const finalPath = getFileLocation(newPath)
-    writeFile(finalPath, addDevScript(finalFileContent))
+    const finalScriptedContent = addScripts(finalFileContent, path.parse(finalPath))
+    writeFile(finalPath, finalScriptedContent)
   } catch (err) { logError(err) }
-}
-
-function addDevScript (fileContent) {
-  if (state.mode === 'dev') {
-    let addedScript = false
-    return fileContent.replace('</head>', () => {
-      if (!addedScript) {
-        addedScript = true
-        return devScript + '</head>'
-      }
-    })
-  } else {
-    return fileContent
-  }
 }

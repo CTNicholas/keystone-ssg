@@ -35,12 +35,13 @@ module.exports = class Server {
       })
 
       app.use(function (req, res) {
-        res.send(404, 'insert error page here')
+        res.status(404).send(require('./error-page.js'))
       })
 
       return new Promise((resolve, reject) => {
         this.server = app.listen(this.port, () => {
           serverLog.serverRunning(this.port)
+          this.refresh()
           resolve()
         })
       })
@@ -75,11 +76,11 @@ module.exports = class Server {
 
   reload () {
     this.stop()
-    return this.start().then(this.refresh())
+    return this.start()
   }
 
   refresh () {
-    if (!state.error && config.watch) {
+    if (!state.error && config.watch && wss) {
       wss.clients.forEach(function each (client) {
         if (client.readyState === WebSocket.OPEN) {
           client.send('refresh')

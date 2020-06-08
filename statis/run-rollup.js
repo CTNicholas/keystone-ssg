@@ -13,6 +13,7 @@ module.exports = function (fileContent, fileObj, filePath) {
 
   const inputOptions = {
     input: filePath,
+    onwarn: error => logError(error, filePath),
     plugins: [
       ...defaultPlugins(res => { result = res })
     ]
