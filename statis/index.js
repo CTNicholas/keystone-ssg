@@ -22,6 +22,8 @@ runBuild().then(() => {
 if (state.mode === 'dev') {
   require('./run-dev.js')
 }
+
+// console.log(InteractionObserver)
 /*
 var sass = require('node-sass')
 

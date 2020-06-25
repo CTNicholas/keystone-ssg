@@ -1,10 +1,10 @@
 const config = require('./config')
 const state = require('./state.js')
 const devScript = require('./dev-script.js')
-const pill = require('./pill.js')
+const dynamicLinks = require('./dynamic-links.js')
 
 const scripts = [
-  addPill,
+  adddynamicLinks,
   addDevScript
 ]
 
@@ -15,9 +15,9 @@ module.exports = function (fileContent, fileObj) {
   return fileContent
 }
 
-function addPill (fileContent, fileObj) {
+function adddynamicLinks (fileContent, fileObj) {
   if (isHtml(fileObj)) {
-    return addToTag(fileContent, pill, 'body')
+    return addToTag(fileContent, dynamicLinks, 'body')
   }
   return fileContent
 }

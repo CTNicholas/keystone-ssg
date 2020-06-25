@@ -1,32 +1,59 @@
 <html>
 <head>
-<!-- STATIS: Dev server script below, run without --dev variable for production -->
-<script>!function(){!function e(){const o=new WebSocket("ws://localhost:8081/");let s=!1;o.onopen=(e=>{console.log("STATIS: Development server started"),s=!0});o.onmessage=(e=>{console.log("Message received:",e.data),"refresh"===e.data&&location.reload()});o.onclose=(o=>{1==s&&console.error("STATIS: Development server closed"),s=!1,setTimeout(e,2000)})}()}();</script>
+
+  <!-- STATIS: Dev server script, run without --dev variable for production -->
+ 
+  <script>
+  try { 
+    if (!window.STATIS_DEV_SCRIPT && window.location.port === '8080') {
+      window.STATIS_DEV_SCRIPT = true
+      ;(function () {
+        startListen()
+        function startListen () {
+          const wsUri = "ws://localhost:8081/"
+          const ws = new WebSocket(wsUri)
+          let serverOpen = false
+          ws.onopen = message => {
+            console.log('STATIS: Development server started')
+            serverOpen = true
+          }
+          ws.onmessage = message => {
+            console.log('Message received:', message.data)
+            if (message.data === 'refresh') {
+              location.reload()
+            }
+          }
+          ws.onerror = message => {
+            console.log('STATIS: Error:', message)
+          }
+          ws.onclose = message => {
+            if (serverOpen == true) { 
+              console.error('STATIS: Development server closed')
+            }
+            serverOpen = false
+            setTimeout(startListen, 2000)
+          }
+        }
+      })()
+    }
+  } catch (err) { }
+  </script>
 </head>
 <body>
 <h1>docs/isntaller</h1>
 <a href="/">link to home</a>
 <a href="/docs/">link to docs</a>
 
-aafweird indeedssss sssaaffssssaas
+aafweird indeedssss sssaafffffssssaasddd
 
 <h1> I have been imported!</h1>
 
 <script>
 
-if (document.readyState === 'interactive' ||
-    document.readyState === 'complete') {
-  run()
-} else {
-  document.addEventListener('DOMContentLoaded', () => {
-    run()
-  })
-}
-
-function run () {
+whenPageReady(() => {
   watchLinks()
   window.addEventListener('popstate', onPopState)
-}
+})
 
 function watchLinks () {
   const links = document.querySelectorAll('a')
@@ -44,35 +71,63 @@ function linkClicked (event) {
   }
 }
 
-function changePage (newPage, url, popstate = false) {
-  document.open()
-  document.write(newPage)
-  document.close()
-  updateHistory(url, popstate)
-}
-
-function updateHistory (url, popstate) {
-  if (!popstate) {
-    history.pushState(null, document.title, url)
-  } 
-}
-
-function onPopState (event) {
-  location.reload()
-  console.log('Current href', location.href, 'popping')
-
-  const lastUrl = location.href
-  getPage(lastUrl).then(newPage => {
-    changePage(newPage, lastUrl, true)
-  })
-}
-
 function linkAllowed (target) {
   const sameHost = location.host === target.host
   const notSamePage =
     location.host + location.pathname + location.search !==
     target.host + target.pathname + target.search
   return sameHost && notSamePage
+}
+
+function changePage (newPage, url, popstate = false) {
+  const state = getPageState()
+  document.open()
+  document.write(newPage)
+  document.close()
+  updateHistory(url, popstate, state)
+}
+
+function updateHistory (url, popstate, state) {
+  console.log('UH')
+  if (!popstate) {
+    console.log('PS')
+    history.pushState(state, document.title, url)
+  } 
+}
+
+function getPageState () {
+  const { x, y } = getScrollPos()
+  return {
+    scroll: {
+      x,
+      y
+    }
+  }
+}
+
+function getScrollPos () {
+  const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0
+  const x = window.scrollX || document.documentElement.scrollLeft || document.body.scrollLeft || 0
+  console.log('ASDASFG', y)
+  return { x: x, y: y }
+}
+
+function setScrollPos (x, y) {
+  whenPageReady(() => {
+    console.log('Scroll fix', x, y)
+    window.scrollTo(x, y)
+  })
+}
+
+function onPopState (event) {
+  // location.reload()
+  console.log('Current href', location.href, 'popping', event)
+  
+  const lastUrl = location.href
+  getPage(lastUrl).then(newPage => {
+    changePage(newPage, lastUrl, true)
+    setScrollPos(event.state.scroll.x, event.state.scroll.y)
+  })
 }
 
 async function getPage (url) {
@@ -83,6 +138,17 @@ async function getPage (url) {
   } catch (err) { 
     console.log(err)
     window.location(url)
+  }
+}
+
+function whenPageReady (func) {
+  if (document.readyState === 'interactive' ||
+    document.readyState === 'complete') {
+    func()
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      func()
+    })
   }
 }
 </script></body>

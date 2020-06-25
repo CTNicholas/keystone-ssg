@@ -12,7 +12,7 @@ module.exports = class Server {
     this.port = port
     this.portWs = portWs
     this.server = undefined
-    this.users = []
+    this.userCount = 0
     this.start().then(() => {
       if (config.watch) {
         this.startWss()
@@ -59,11 +59,32 @@ module.exports = class Server {
   startWss () {
     wss = new WebSocket.Server({ port: this.portWs })
     wss.on('connection', ws => {
-      console.log('User connected', this.users.length)
-      this.users.push(ws)
-      ws.on('message', message => {
-        console.log('Message:', message)
+      this.isAlive = true
+      ws.on('pong', function () {
+        this.isAlive = true
       })
+
+      this.updateUsers()
+
+      // console.log('User connected', ++this.userCount)
+      ws.on('message', message => {
+        // console.log('Message:', message)
+      })
+
+      ws.on('close', () => {
+        // console.log('Disconnected', --this.userCount)
+      })
+    })
+  }
+
+  updateUsers () {
+    wss.clients.forEach((ws) => {
+      if (ws.isAlive === false) {
+        // console.log('Terminate connection', --this.userCount)
+        return ws.terminate()
+      }
+      ws.isAlive = false
+      ws.ping()
     })
   }
 
