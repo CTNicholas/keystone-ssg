@@ -13,7 +13,7 @@
       ;(function () {
         startListen()
         function startListen () {
-          const wsUri = "ws://localhost:8081/"
+          const wsUri = "ws://192.168.1.107:8081/"
           const ws = new WebSocket(wsUri)
           let serverOpen = false
           ws.onopen = message => {
@@ -57,7 +57,9 @@
 	<a href="#hi">anchor link</a>
   <br>
 	<a href="<< link = /docs >>">anchor link</a>
-	
+	working okay
+
+	<html-import src="components/tryimportme.html" />
   
 	this is a test
 	

@@ -9,7 +9,7 @@ module.exports = `
       ;(function () {
         startListen()
         function startListen () {
-          const wsUri = "ws://localhost:${config.portWs}/"
+          const wsUri = "ws://${config.devServerIp}:${config.portWs}/"
           const ws = new WebSocket(wsUri)
           let serverOpen = false
           ws.onopen = message => {

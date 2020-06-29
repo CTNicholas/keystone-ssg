@@ -39,6 +39,7 @@ module.exports = {
   ],
   port: port,
   portWs: port + 1,
+  devServerIp: 'localhost',
   cwd: process.cwd(),
   disconnectReloadTime: 2000,
   reloadDebounce: 150,

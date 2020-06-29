@@ -10,7 +10,7 @@
       ;(function () {
         startListen()
         function startListen () {
-          const wsUri = "ws://localhost:8081/"
+          const wsUri = "ws://192.168.1.107:8081/"
           const ws = new WebSocket(wsUri)
           let serverOpen = false
           ws.onopen = message => {
