@@ -1,1 +1,1 @@
-![Keystone logo](https://inki.uk/keystone_logo_small.png)
+![Keystone logo](keystone/keystone_logo_small.png)
