@@ -1,4 +1,6 @@
 const port = 8080
+
+/*
 var sass = require('node-sass')
 var babel = require('@babel/core')
 
@@ -24,8 +26,10 @@ const babelPlugin = {
     }).code
   }
 }
+*/
 
 module.exports = {
+  indexPath: '/',
   dynamicLoad: true,
   build: 'pages',
   served: 'public',
