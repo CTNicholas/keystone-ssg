@@ -1,6 +1,6 @@
 const config = require('../config.js')
 const state = require('../state.js')
-const serverLog = require('../log-server.js')
+const serverLog = require('./log-server.js')
 const express = require('express')
 const app = express()
 

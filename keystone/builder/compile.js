@@ -1,9 +1,9 @@
-const config = require('./config.js')
+const config = require('../config.js')
 const fs = require('fs-extra')
-const runRollup = require('./run-rollup.js')
+const runRollup = require('./rollup.js')
 const path = require('path')
-const state = require('./state.js')
-const logError = require('./log-error.js')
+const state = require('../state.js')
+const logError = require('../server/log-error.js')
 
 /*
  * Add a function to compileTypes to add a new substituion

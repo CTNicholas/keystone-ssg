@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 // const plugins = require('./plugins.js')
 const runRollup = require('./run-rollup.js')
 const path = require('path')
-const state = require('./state.js')
+const state = require('../state.js')
 const logError = require('./log-error.js')
 
 const compileTypes = {

@@ -1,6 +1,6 @@
 const fs = require('fs-extra')
 const path = require('path')
-const logError = require('./log-error.js')
+const logError = require('../server/log-error.js')
 
 module.exports = function (finalPath, finalFileContent) {
   try {

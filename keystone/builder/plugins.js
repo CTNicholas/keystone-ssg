@@ -1,5 +1,5 @@
-const config = require('./config')
-const state = require('./state.js')
+const config = require('../config')
+const state = require('../state.js')
 const path = require('path')
 const fs = require('fs-extra')
 

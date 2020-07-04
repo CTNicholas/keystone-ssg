@@ -1,4 +1,4 @@
-const config = require('./config.js')
+const config = require('../config.js')
 
 module.exports = `
   <!-- STATIS: Dev server script, run without --dev variable for production -->\n 

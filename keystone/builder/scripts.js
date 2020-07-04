@@ -1,7 +1,7 @@
-const config = require('./config')
-const state = require('./state.js')
-const devScript = require('./dev-script.js')
-const dynamicLinks = require('./dynamic-links.js')
+// const config = require('../config')
+const state = require('../state.js')
+const devScript = require('../scripts/dev-script.js')
+const dynamicLinks = require('../scripts/dynamic-links.js')
 
 const scripts = [
   adddynamicLinks,

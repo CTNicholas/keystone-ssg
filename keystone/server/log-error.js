@@ -1,5 +1,5 @@
 const chalk = require('chalk')
-const state = require('./state.js')
+const state = require('../state.js')
 const serverLog = require('./log-server.js')
 
 const errorList = {

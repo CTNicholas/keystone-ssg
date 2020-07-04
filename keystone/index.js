@@ -6,7 +6,7 @@ const getEnv = (argKey, envKey) => {
 }
 
 const state = require('./state.js')
-const runBuild = require('./run-build.js')
+const runBuild = require('./build.js')
 
 if (process.argv.includes('--dev')) {
   state.mode = 'dev'
@@ -20,7 +20,7 @@ runBuild().then(() => {
 })
 
 if (state.mode === 'dev') {
-  require('./run-dev.js')
+  require('./dev.js')
 }
 
 // console.log(InteractionObserver)

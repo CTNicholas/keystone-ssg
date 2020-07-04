@@ -2,9 +2,9 @@ const config = require('./config.js')
 const state = require('./state.js')
 const chokidar = require('chokidar')
 const Server = require('./server/server.js')
-const serverLog = require('./log-server.js')
-const runBuild = require('./run-build.js')
-const logError = require('./log-error.js')
+const serverLog = require('./server/log-server.js')
+const runBuild = require('./build.js')
+const logError = require('./server/log-error.js')
 
 state.devServer = new Server()
 

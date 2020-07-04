@@ -1,6 +1,6 @@
 const rollup = require('rollup')
-const defaultPlugins = require('./config.rollup.js')
-const logError = require('./log-error.js')
+const defaultPlugins = require('../config.rollup.js')
+const logError = require('../server/log-error.js')
 
 module.exports = function (fileContent, fileObj, filePath) {
   if (fileObj.ext === '.html') {
