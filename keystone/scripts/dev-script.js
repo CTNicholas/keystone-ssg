@@ -7,6 +7,7 @@ module.exports = `
     if (!window.STATIS_DEV_SCRIPT && window.location.port === '${config.port}') {
       window.STATIS_DEV_SCRIPT = true
       ;(function () {
+        let alreadyClosed = false
         startListen()
         function startListen () {
           const wsUri = "ws://${config.devServerIp}:${config.portWs}/"
@@ -15,6 +16,9 @@ module.exports = `
           ws.onopen = message => {
             console.log('STATIS: Development server started')
             serverOpen = true
+            if (alreadyClosed) {
+              location.reload()
+            }
           }
           ws.onmessage = message => {
             console.log('Message received:', message.data)
@@ -26,8 +30,9 @@ module.exports = `
             console.log('STATIS: Error:', message)
           }
           ws.onclose = message => {
-            if (serverOpen == true) { 
+            if (serverOpen === true) { 
               console.error('STATIS: Development server closed')
+              alreadyClosed = true
             }
             serverOpen = false
             setTimeout(startListen, ${config.disconnectReloadTime})

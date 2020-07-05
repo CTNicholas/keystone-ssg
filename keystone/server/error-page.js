@@ -1,4 +1,4 @@
-const wsScript = require('../dev-script.js')
+const wsScript = require('../scripts/dev-script.js')
 
 module.exports = `
 <html>

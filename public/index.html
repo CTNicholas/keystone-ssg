@@ -12,6 +12,7 @@
     if (!window.STATIS_DEV_SCRIPT && window.location.port === '8080') {
       window.STATIS_DEV_SCRIPT = true
       ;(function () {
+        let alreadyClosed = false
         startListen()
         function startListen () {
           const wsUri = "ws://192.168.1.107:8081/"
@@ -20,6 +21,10 @@
           ws.onopen = message => {
             console.log('STATIS: Development server started')
             serverOpen = true
+            if (alreadyClosed) {
+              console.log('GOGO')
+              location.reload()
+            }
           }
           ws.onmessage = message => {
             console.log('Message received:', message.data)
@@ -31,8 +36,9 @@
             console.log('STATIS: Error:', message)
           }
           ws.onclose = message => {
-            if (serverOpen == true) { 
+            if (serverOpen === true) { 
               console.error('STATIS: Development server closed')
+              alreadyClosed = true
             }
             serverOpen = false
             setTimeout(startListen, 2000)
@@ -44,7 +50,7 @@
   </script>
 </head>
 
-  <body>
+  <body>PLSSSOKzgggssss
   <h1>index</h1>
   <div id="content">
   <a href="/docs"> link to docsss </a>
@@ -62,7 +68,8 @@
 	working okay
 
 	
-	
+	<h1> I have been imported!</h1>
+</_import>
 	<script src="/js\testlog.js"></script>
   
 	this is a test

@@ -13,6 +13,8 @@ const logError = require('../server/log-error.js')
  * addWord (attrs) { return 'I am a <b>' + attrs.name + '</b>' }
  */
 
+const compilePrefix = '_'
+
 const compileTypes = {
   import: addImport,
   script: addScript,
@@ -31,10 +33,11 @@ module.exports = async function ({ fileContent, fileName }, fileObj) {
 async function compiler (fileContent, fileObj, fileName) {
   const asyncPromises = []
   const asyncResults = []
-  const varRegex = /<html-(\w+)\s*([\s\S]*?)\s*\/?>/igm
+  // REGEX: /<_(\w+)\s*([\s\S]*?)\s*\/?>/igm
+  const varRegex = new RegExp(`<${compilePrefix}(\\w+)\\s*([\\s\\S]*?)\\s*\\/?>`, 'igm')
   fileContent.replace(varRegex, (match, p1, p2) => {
     asyncPromises.push(new Promise((resolve, reject) => {
-      const command = { func: p1, attr: getAttributes(p2) }
+      const command = { func: p1.toLowerCase(), attr: getAttributes(p2) }
       if (Object.keys(compileTypes).includes(command.func)) {
         compileTypes[command.func](command.attr, fileObj, fileName).then(res => {
           asyncResults[`${match}${p1}${p2}`] = res || match
@@ -53,7 +56,7 @@ async function compiler (fileContent, fileObj, fileName) {
     const newFileContent = fileContent.replace(varRegex, (match, p1, p2) => {
       return asyncResults[`${match}${p1}${p2}`]
     })
-    return newFileContent
+    return removeTrailingTags(newFileContent)
   })
 }
 
@@ -134,6 +137,13 @@ async function addLinks (attrs) {
     return '<a href="' + config.indexPath + attrs.to + '">' + attrs.text + '</a>'
   } else {
     return false
+  }
+}
+
+function removeTrailingTags (text) {
+  return text
+  for (const cType of Object.keys(compileTypes)) {
+
   }
 }
 
