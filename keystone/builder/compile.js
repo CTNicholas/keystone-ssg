@@ -19,18 +19,21 @@ const compileTypes = {
   import: addImport,
   script: addScript,
   style: addStyle,
-  link: addLinks
+  link: addLinks,
+  var: addVars
 }
 
+const excludedVariables = ['src']
+
 module.exports = async function ({ fileContent, fileName }, fileObj) {
-  return compiler(fileContent, fileObj, fileName)
+  return compiler({}, fileContent, fileObj, fileName)
 }
 
 /*
  * Promises don't work well with replace, so we get the substitions values,
  * and then make the replacements after
  */
-async function compiler (fileContent, fileObj, fileName) {
+async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
   const asyncPromises = []
   const asyncResults = []
   // REGEX: /<_(\w+)\s*([\s\S]*?)\s*\/?>/igm
@@ -39,7 +42,7 @@ async function compiler (fileContent, fileObj, fileName) {
     asyncPromises.push(new Promise((resolve, reject) => {
       const command = { func: p1.toLowerCase(), attr: getAttributes(p2) }
       if (Object.keys(compileTypes).includes(command.func)) {
-        compileTypes[command.func](command.attr, fileObj, fileName).then(res => {
+        compileTypes[command.func](command.attr, fileObj, compileVars, fileName).then(res => {
           asyncResults[`${match}${p1}${p2}`] = res || match
           resolve()
           return match
@@ -100,7 +103,7 @@ async function addStyle (attrs) {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
       const newFile = await runRollup(fileContent, fileObj, filePath)
-      newFile.fileContent = await compiler(newFile.fileContent)
+      newFile.fileContent = await compiler({}, newFile.fileContent)
       fs.ensureDirSync(path.join('public', 'css'))
       await fs.writeFileSync(publicPath, newFile.fileContent)
     }
@@ -118,7 +121,7 @@ async function addImport (attrs) {
         const fileObj = path.parse(filePath)
         const fileContent = fs.readFileSync(filePath, 'utf-8')
         const newFile = await runRollup(fileContent, fileObj, filePath)
-        newFile.fileContent = await compiler(newFile.fileContent)
+        newFile.fileContent = await compiler(getVariables(attrs, ['src']), newFile.fileContent)
         return await newFile.fileContent
       } else {
         return false
@@ -140,11 +143,29 @@ async function addLinks (attrs) {
   }
 }
 
-function removeTrailingTags (text) {
-  return text
-  for (const cType of Object.keys(compileTypes)) {
-
+async function addVars (attrs, fileObj, vars) {
+  console.log('ATTR', attrs)
+  let result = ''
+  for (const [name, val] of Object.entries(attrs)) {
+    console.log(name, 'is', vars[name])
+    if (val === true) {
+      result += vars[name]
+    }
   }
+  return result
+}
+
+function getVariables (attrs, exclude) {
+  return Object.fromEntries(Object.entries(attrs).filter(([name, val]) => !exclude.includes(name))) || {}
+}
+
+function removeTrailingTags (text) {
+  for (const comp of Object.keys(compileTypes)) {
+    text.replace(new RegExp(`<\\/${compilePrefix}${comp}>`, 'igm'), () => {
+      return ''
+    })
+  }
+  return text
 }
 
 function alreadyCompiled (filePath) {
