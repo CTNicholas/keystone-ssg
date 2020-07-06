@@ -7,7 +7,7 @@ const logError = require('../server/log-error.js')
 
 /*
  * Add a function to compileTypes to add a new substituion
- * <html-word name="apple" large> will run the function assigned to the key word: addWord
+ * <html-word name="apple" large> will run the function assigned to { word: addWord }
  * The function is sent the attributes and must return a value to replace the tag
  * addWord({ name: apple, large: true })
  * addWord (attrs) { return 'I am a <b>' + attrs.name + '</b>' }
@@ -95,15 +95,12 @@ async function addStyle (attrs) {
   if ('src' in attrs) {
     const filePath = path.normalize(attrs.src)
     const newPath = path.join('css', path.parse(filePath).name + '.css')
-    // const styleContent = fs.readFileSync(filePath, 'utf-8')
     const publicPath = path.join('public', newPath)
     if (!alreadyCompiled(filePath)) {
-      console.log('style not done')
-
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
       const newFile = await runRollup(fileContent, fileObj, filePath)
-      newFile.fileContent = await compiler({}, newFile.fileContent)
+      newFile.fileContent = await compiler(getVariables(attrs, ['src']), newFile.fileContent)
       fs.ensureDirSync(path.join('public', 'css'))
       await fs.writeFileSync(publicPath, newFile.fileContent)
     }
