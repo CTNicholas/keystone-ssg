@@ -38,7 +38,7 @@ module.exports = async function ({ fileContent, fileName }, fileObj) {
 async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
   const asyncPromises = []
   const asyncResults = []
-  let slotContent = ''
+  const slotContent = { slot: false }
 
   // REGEX: /<_(\w+)\s*([\s\S]*?)\s*\/?>/igm
   fileContent.replace(varRegex, (match, p1, p2) => {
@@ -55,7 +55,8 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
           fileObj: fileObj,
           vars: compileVars,
           fileName: fileName,
-          promiseObj: asyncResults[`${match}${p1}${p2}`]
+          slotContent
+          // promiseObj: asyncResults[`${match}${p1}${p2}`]
         }).then(res => {
           asyncResults[`${match}${p1}${p2}`].content = res === false ? match : res
           resolve()
@@ -73,7 +74,7 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
     let newFileContent = fileContent.replace(varRegex, (match, p1, p2) => {
       return asyncResults[`${match}${p1}${p2}`].content
     })
-    newFileContent = addSlots(newFileContent, slotContent)
+    newFileContent = addSlots(newFileContent, slotContent.slot)
     return removeTrailingTags(newFileContent)
   })
 }
@@ -92,9 +93,9 @@ function addSlots (content, slotContent) {
   return content
 }
 
-async function addTemplate ({ attrs, promiseObj }) {
+async function addTemplate ({ attrs, slotContent }) {
   return addImport({ attrs }).then(res => {
-    promiseObj.slot = res
+    slotContent.slot = res
     console.log('TEMPALTE:', res)
     return ''
   })
