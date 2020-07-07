@@ -13,9 +13,13 @@ const logError = require('../server/log-error.js')
  * addWord (attrs) { return 'I am a <b>' + attrs.name + '</b>' }
  */
 
+const excludedAttributes = ['src']
+
 const compilePrefix = '_'
+const varRegex = new RegExp(`<${compilePrefix}(\\w+)\\s*([\\s\\S]*?)\\s*\\/?>`, 'igm')
 
 const compileTypes = {
+  template: addTemplate,
   import: addImport,
   script: addScript,
   style: addStyle,
@@ -23,32 +27,42 @@ const compileTypes = {
   var: addVars
 }
 
-const excludedVariables = ['src']
-
 module.exports = async function ({ fileContent, fileName }, fileObj) {
   return compiler({}, fileContent, fileObj, fileName)
 }
 
 /*
- * Promises don't work well with replace, so we get the substitions values,
+ * Promises don't work well with replace, so we get the substition values,
  * and then make the replacements after
  */
 async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
   const asyncPromises = []
   const asyncResults = []
+  let slotContent = ''
+
   // REGEX: /<_(\w+)\s*([\s\S]*?)\s*\/?>/igm
-  const varRegex = new RegExp(`<${compilePrefix}(\\w+)\\s*([\\s\\S]*?)\\s*\\/?>`, 'igm')
   fileContent.replace(varRegex, (match, p1, p2) => {
+    asyncResults[`${match}${p1}${p2}`] = {
+      content: '',
+      slot: false
+    }
+
     asyncPromises.push(new Promise((resolve, reject) => {
       const command = { func: p1.toLowerCase(), attr: getAttributes(p2) }
       if (Object.keys(compileTypes).includes(command.func)) {
-        compileTypes[command.func](command.attr, fileObj, compileVars, fileName).then(res => {
-          asyncResults[`${match}${p1}${p2}`] = res || match
+        compileTypes[command.func]({
+          attrs: command.attr,
+          fileObj: fileObj,
+          vars: compileVars,
+          fileName: fileName,
+          promiseObj: asyncResults[`${match}${p1}${p2}`]
+        }).then(res => {
+          asyncResults[`${match}${p1}${p2}`].content = res === false ? match : res
           resolve()
           return match
         }).catch(error => logError(error, { name: fileName }))
       } else {
-        asyncResults[`${match}${p1}${p2}`] = match
+        asyncResults[`${match}${p1}${p2}`].content = match
         resolve()
         return match
       }
@@ -56,24 +70,37 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
   })
 
   return Promise.all(asyncPromises).then(() => {
-    const newFileContent = fileContent.replace(varRegex, (match, p1, p2) => {
-      return asyncResults[`${match}${p1}${p2}`]
+    let newFileContent = fileContent.replace(varRegex, (match, p1, p2) => {
+      return asyncResults[`${match}${p1}${p2}`].content
     })
+    newFileContent = addSlots(newFileContent, slotContent)
     return removeTrailingTags(newFileContent)
   })
 }
 
-function getAttributes (attrString) {
-  const attrRegex = /([^\s=]+)(?:=(['"`])(.*?)\2)?/igm
-  const res = {}
-  attrString.replace(attrRegex, (all, a1, a2, a3) => {
-    res[a1] = a3 || true
-  })
-  console.log('HI', res)
-  return res
+function addSlots (content, slotContent) {
+  if (slotContent) {
+    console.log('Adding slot')
+    return slotContent.replace(varRegex, (match, p1, p2, p3) => {
+      if (p1.toLowerCase() === 'slot') {
+        console.log('Slot added')
+        slotContent = ''
+        return content
+      }
+    })
+  }
+  return content
 }
 
-async function addScript (attrs, fileObj) {
+async function addTemplate ({ attrs, promiseObj }) {
+  return addImport({ attrs }).then(res => {
+    promiseObj.slot = res
+    console.log('TEMPALTE:', res)
+    return ''
+  })
+}
+
+async function addScript ({ attrs, fileObj }) {
   if ('src' in attrs) {
     const filePath = path.normalize(attrs.src)
     const newPath = path.join('js', path.parse(filePath).name + '.js')
@@ -91,7 +118,7 @@ async function addScript (attrs, fileObj) {
   }
 }
 
-async function addStyle (attrs) {
+async function addStyle ({ attrs }) {
   if ('src' in attrs) {
     const filePath = path.normalize(attrs.src)
     const newPath = path.join('css', path.parse(filePath).name + '.css')
@@ -100,7 +127,7 @@ async function addStyle (attrs) {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
       const newFile = await runRollup(fileContent, fileObj, filePath)
-      newFile.fileContent = await compiler(getVariables(attrs, ['src']), newFile.fileContent)
+      newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent)
       fs.ensureDirSync(path.join('public', 'css'))
       await fs.writeFileSync(publicPath, newFile.fileContent)
     }
@@ -110,7 +137,7 @@ async function addStyle (attrs) {
   }
 }
 
-async function addImport (attrs) {
+async function addImport ({ attrs }) {
   if ('src' in attrs) {
     const filePath = path.normalize(attrs.src)
     try {
@@ -118,7 +145,7 @@ async function addImport (attrs) {
         const fileObj = path.parse(filePath)
         const fileContent = fs.readFileSync(filePath, 'utf-8')
         const newFile = await runRollup(fileContent, fileObj, filePath)
-        newFile.fileContent = await compiler(getVariables(attrs, ['src']), newFile.fileContent)
+        newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent)
         return await newFile.fileContent
       } else {
         return false
@@ -132,7 +159,7 @@ async function addImport (attrs) {
   }
 }
 
-async function addLinks (attrs) {
+async function addLinks ({ attrs }) {
   if ('to' in attrs && 'text' in attrs) {
     return '<a href="' + config.indexPath + attrs.to + '">' + attrs.text + '</a>'
   } else {
@@ -140,11 +167,9 @@ async function addLinks (attrs) {
   }
 }
 
-async function addVars (attrs, fileObj, vars) {
-  console.log('ATTR', attrs)
+async function addVars ({ attrs, fileObj, vars }) {
   let result = ''
   for (const [name, val] of Object.entries(attrs)) {
-    console.log(name, 'is', vars[name])
     if (val === true) {
       result += vars[name]
     }
@@ -156,9 +181,18 @@ function getVariables (attrs, exclude) {
   return Object.fromEntries(Object.entries(attrs).filter(([name, val]) => !exclude.includes(name))) || {}
 }
 
+function getAttributes (attrString) {
+  const attrRegex = /([^\s=]+)(?:=(['"`])(.*?)\2)?/igm
+  const res = {}
+  attrString.replace(attrRegex, (all, a1, a2, a3) => {
+    res[a1] = a3 || true
+  })
+  return res
+}
+
 function removeTrailingTags (text) {
   for (const comp of Object.keys(compileTypes)) {
-    text.replace(new RegExp(`<\\/${compilePrefix}${comp}>`, 'igm'), () => {
+    text = text.replace(new RegExp(`<\\/${compilePrefix}${comp}>`, 'igm'), () => {
       return ''
     })
   }
