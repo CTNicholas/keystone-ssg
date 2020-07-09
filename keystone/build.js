@@ -15,17 +15,24 @@ module.exports = function () {
   fs.emptyDirSync('public')
   state.filesBuilt = []
 
+  if (!fs.existsSync(config.build)) {
+    fs.mkdirSync(config.build)
+  }
+
   return new Promise((resolve, reject) => {
     recursive(config.build, (err, files) => {
       if (err) {
         reject(err)
+      }
+      if (files.length === 0) {
+        buildSplashPage()
       }
       for (const filePath of files) {
         buildFile(filePath)
       }
       resolve()
     })
-  })
+  }).catch(console.log)
 }
 
 async function buildFile (filePath) {
@@ -37,7 +44,13 @@ async function buildFile (filePath) {
     const finalFileContent = await compile(newFile, fileObj)
     const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
     const finalPath = getFileLocation(newPath)
-    const finalScriptedContent = addScripts(finalFileContent, path.parse(finalPath))
+    const finalScriptedContent = await addScripts(finalFileContent, path.parse(finalPath))
     writeFile(finalPath, finalScriptedContent)
   } catch (err) { logError(err) }
+}
+
+function buildSplashPage () {
+  const emptyPages = require('./splash.js')
+  fs.appendFileSync(path.join(config.build, 'index.html'), emptyPages)
+  console.log('No index.html, default splash page built')
 }

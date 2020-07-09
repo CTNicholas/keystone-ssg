@@ -34,9 +34,11 @@ module.exports = class Server {
         next()
       })
 
+      /*
       app.use(function (req, res) {
         res.status(404).send(require('./error-page.js'))
       })
+      */
 
       return new Promise((resolve, reject) => {
         this.server = app.listen(this.port, () => {
@@ -68,7 +70,7 @@ module.exports = class Server {
 
       // console.log('User connected', ++this.userCount)
       ws.on('message', message => {
-        // console.log('Message:', message)
+        console.log('Message:', message)
       })
 
       ws.on('close', () => {

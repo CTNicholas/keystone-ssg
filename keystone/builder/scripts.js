@@ -1,5 +1,8 @@
 // const config = require('../config')
 const state = require('../state.js')
+const runRollup = require('./rollup')
+const path = require('path')
+
 const devScript = require('../scripts/dev-script.js')
 const dynamicLinks = require('../scripts/dynamic-links.js')
 
@@ -8,7 +11,7 @@ const scripts = [
   addDevScript
 ]
 
-module.exports = function (fileContent, fileObj) {
+module.exports = async function (fileContent, fileObj) {
   for (const script of scripts) {
     fileContent = script(fileContent, fileObj)
   }
@@ -31,12 +34,16 @@ function addDevScript (fileContent, fileObj) {
 
 function addToTag (fileContent, newContent, tag) {
   let addedScript = false
-  return fileContent.replace(`</${tag}>`, () => {
+  fileContent = fileContent.replace(`</${tag}>`, () => {
     if (!addedScript) {
       addedScript = true
       return newContent + `</${tag}>`
     }
   })
+  if (!addedScript) {
+    fileContent = `<${tag}>${newContent}</${tag}>${fileContent}`
+  }
+  return fileContent
 }
 
 function isHtml (fileObj) {
