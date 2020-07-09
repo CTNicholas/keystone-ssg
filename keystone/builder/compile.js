@@ -81,10 +81,8 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
 
 function addSlots (content, slotContent) {
   if (slotContent) {
-    console.log('Adding slot')
     return slotContent.replace(varRegex, (match, p1, p2, p3) => {
       if (p1.toLowerCase() === 'slot') {
-        console.log('Slot added')
         slotContent = ''
         return content
       }
@@ -96,7 +94,6 @@ function addSlots (content, slotContent) {
 async function addTemplate ({ attrs, slotContent }) {
   return addImport({ attrs }).then(res => {
     slotContent.slot = res
-    console.log('TEMPALTE:', res)
     return ''
   })
 }
