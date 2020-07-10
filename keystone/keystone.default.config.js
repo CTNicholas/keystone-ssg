@@ -39,7 +39,8 @@ module.exports = {
     'pages',
     'assets',
     'components',
-    'src'
+    'src',
+    'styles'
   ],
   port: port,
   portWs: port + 1,

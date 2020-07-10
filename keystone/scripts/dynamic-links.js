@@ -38,9 +38,7 @@ function changePage (newPage, url, popstate = false) {
 }
 
 function updateHistory (url, popstate, state) {
-  console.log('UH')
   if (!popstate) {
-    console.log('PS')
     history.pushState(state, document.title, url)
   } 
 }
@@ -58,7 +56,6 @@ function getPageState () {
 function getScrollPos () {
   const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0
   const x = window.scrollX || document.documentElement.scrollLeft || document.body.scrollLeft || 0
-  console.log('ASDASFG', y)
   return { x: x, y: y }
 }
 
@@ -70,9 +67,6 @@ function setScrollPos (x, y) {
 }
 
 function onPopState (event) {
-  // location.reload()
-  console.log('Current href', location.href, 'popping', event)
-  
   const lastUrl = location.href
   getPage(lastUrl).then(newPage => {
     changePage(newPage, lastUrl, true)

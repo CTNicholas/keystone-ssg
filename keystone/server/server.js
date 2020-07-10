@@ -34,11 +34,9 @@ module.exports = class Server {
         next()
       })
 
-      /*
       app.use(function (req, res) {
         res.status(404).send(require('./error-page.js'))
       })
-      */
 
       return new Promise((resolve, reject) => {
         this.server = app.listen(this.port, () => {

@@ -11,7 +11,6 @@ const addScripts = require('./builder/scripts.js')
 const logError = require('./server/log-error.js')
 
 module.exports = function () {
-  console.log('Building..')
   fs.emptyDirSync('public')
   state.filesBuilt = []
 
@@ -20,19 +19,23 @@ module.exports = function () {
   }
 
   return new Promise((resolve, reject) => {
-    recursive(config.build, (err, files) => {
+    recursive(config.build, async (err, files) => {
       if (err) {
         reject(err)
       }
       if (files.length === 0) {
         buildSplashPage()
       }
+
+      const buildPromises = []
       for (const filePath of files) {
-        buildFile(filePath)
+        buildPromises.push(buildFile(filePath))
       }
+
+      await Promise.all(buildPromises)
       resolve()
     })
-  }).catch(console.log)
+  }).catch(logError)
 }
 
 async function buildFile (filePath) {
@@ -44,9 +47,9 @@ async function buildFile (filePath) {
     const finalFileContent = await compile(newFile, fileObj)
     const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
     const finalPath = getFileLocation(newPath)
-    const finalScriptedContent = await addScripts(finalFileContent, path.parse(finalPath))
+    const finalScriptedContent = await addScripts(finalFileContent, path.parse(finalPath), finalPath)
     writeFile(finalPath, finalScriptedContent)
-  } catch (err) { logError(err) }
+  } catch (err) { logError(err, { path: filePath }) }
 }
 
 function buildSplashPage () {

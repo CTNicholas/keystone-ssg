@@ -3,7 +3,7 @@ const defaultPlugins = require('../config.rollup.js')
 const logError = require('../server/log-error.js')
 
 module.exports = function (fileContent, fileObj, filePath) {
-  if (fileObj.ext === '.html') {
+  if (fileObj && (fileObj.ext === '.html' || fileObj.ext === '.htm')) {
     return new Promise((resolve, reject) => {
       resolve({ fileContent: fileContent, fileName: fileObj.base })
     }).catch(logError)
@@ -34,7 +34,7 @@ module.exports = function (fileContent, fileObj, filePath) {
       finalName = fileObj.base
     }
     return { fileContent: finalCode, fileName: finalName }
-  })
+  }).catch(logError)
 
   async function build () {
     try {

@@ -7,11 +7,8 @@ module.exports = {
 }
 
 function fileChange (changes) {
-  divider()
-  console.log('FILE CHANGES')
+  // divider()
   console.table(changes)
-  // console.log('Reloading...')
-  divider()
 }
 
 function serverRunning (port) {

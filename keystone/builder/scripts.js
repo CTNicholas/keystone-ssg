@@ -11,7 +11,7 @@ const scripts = [
   addDevScript
 ]
 
-module.exports = async function (fileContent, fileObj) {
+module.exports = async function (fileContent, fileObj, filePath) {
   for (const script of scripts) {
     fileContent = script(fileContent, fileObj)
   }

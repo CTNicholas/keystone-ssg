@@ -101,16 +101,17 @@ async function addTemplate ({ attrs, slotContent }) {
 async function addScript ({ attrs, fileObj }) {
   if ('src' in attrs) {
     const filePath = path.normalize(attrs.src)
-    const newPath = path.join('js', path.parse(filePath).name + '.js')
+    const newName = path.parse(filePath).name
+    const newPath = path.join('js', newName + '.js')
     const scriptContent = fs.readFileSync(filePath, 'utf-8')
     const publicPath = path.join('public', newPath)
     if (!alreadyCompiled(filePath)) {
-      runRollup(scriptContent, fileObj, newPath).then(result => {
+      runRollup(scriptContent, fileObj, filePath).then(result => {
         fs.ensureDirSync(path.join('public', 'js'))
         fs.writeFileSync(publicPath, result.fileContent)
       })
     }
-    return '<script src="' + config.indexPath + newPath + '"></script>'
+    return `<script src="${config.indexPath}js/${newName}.js"></script>`
   } else {
     return false
   }
@@ -119,7 +120,8 @@ async function addScript ({ attrs, fileObj }) {
 async function addStyle ({ attrs }) {
   if ('src' in attrs) {
     const filePath = path.normalize(attrs.src)
-    const newPath = path.join('css', path.parse(filePath).name + '.css')
+    const newName = path.parse(filePath).name
+    const newPath = path.join('css', newName + '.css')
     const publicPath = path.join('public', newPath)
     if (!alreadyCompiled(filePath)) {
       const fileObj = path.parse(filePath)
@@ -127,9 +129,9 @@ async function addStyle ({ attrs }) {
       const newFile = await runRollup(fileContent, fileObj, filePath)
       newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent)
       fs.ensureDirSync(path.join('public', 'css'))
-      await fs.writeFileSync(publicPath, newFile.fileContent)
+      fs.writeFileSync(publicPath, newFile.fileContent)
     }
-    return '<link rel="stylesheet" href="' + config.indexPath + newPath + '">'
+    return `<link rel="stylesheet" href="${config.indexPath}css/${newName}.css">`
   } else {
     return false
   }
@@ -143,7 +145,7 @@ async function addImport ({ attrs }) {
         const fileObj = path.parse(filePath)
         const fileContent = fs.readFileSync(filePath, 'utf-8')
         const newFile = await runRollup(fileContent, fileObj, filePath)
-        newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent)
+        newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent, fileObj)
         return await newFile.fileContent
       } else {
         return false
@@ -168,9 +170,12 @@ async function addLinks ({ attrs }) {
 async function addVars ({ attrs, fileObj, vars }) {
   let result = ''
   for (const [name, val] of Object.entries(attrs)) {
-    if (val === true) {
+    if (val === true && vars[name]) {
       result += vars[name]
     }
+  }
+  if (!result) {
+    result = attrs.default || '_VAR UNDEFINED: ' + Object.keys(vars).join()
   }
   return result
 }

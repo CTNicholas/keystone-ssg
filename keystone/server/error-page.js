@@ -1,4 +1,5 @@
 const wsScript = require('../scripts/dev-script.js')
+const config = require('../config.js')
 
 module.exports = `
 <html>
@@ -13,7 +14,8 @@ module.exports = `
   <body>
     <h1>
       Error
-      <small>Incorrect URL, or check server console for errors</small>
+      <small>Incorrect URL, or check server console for errors.</small>
+      <small>Ensure that there are .html files in the ${config.build} folder. If not, fix this and restart server.</small>
     </h1>
   </body>
 </html>
