@@ -14,6 +14,3 @@ const keystoneScripts = {
 currPackage.scripts = currPackage.scripts ? keystoneScripts : { ...currPackage.scripts, ...keystoneScripts }
 
 fs.writeJsonSync(packageLocation, currPackage)
-
-const { exec } = require('child_process')
-exec('npm install --save-dev @babel/core @babel/preset-env')
