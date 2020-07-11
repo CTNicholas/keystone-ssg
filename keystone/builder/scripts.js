@@ -1,7 +1,5 @@
 const config = require('../config')
 const state = require('../state.js')
-const runRollup = require('./rollup')
-const path = require('path')
 
 const devScript = require('../scripts/dev-script.js')
 const dynamicLinks = require('../scripts/dynamic-links.js')

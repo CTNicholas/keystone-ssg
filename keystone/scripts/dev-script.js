@@ -13,23 +13,23 @@ module.exports = `
           const wsUri = "ws://${config.devServerIp}:${config.portWs}/"
           const ws = new WebSocket(wsUri)
           let serverOpen = false
-          ws.onopen = message => {
+          ws.onopen = function (message) {
             console.log('STATIS: Development server started')
             serverOpen = true
             if (alreadyClosed) {
               location.reload()
             }
           }
-          ws.onmessage = message => {
+          ws.onmessage = function (message) {
             console.log('Message received:', message.data)
             if (message.data === 'refresh') {
               location.reload()
             }
           }
-          ws.onerror = message => {
+          ws.onerror = function (message) {
             console.log('STATIS: Error:', message)
           }
-          ws.onclose = message => {
+          ws.onclose = function (message) {
             if (serverOpen === true) { 
               console.error('STATIS: Development server closed')
               alreadyClosed = true

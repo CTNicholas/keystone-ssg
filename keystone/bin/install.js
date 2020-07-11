@@ -8,8 +8,8 @@ fs.copySync('keystone/bin/base', process.env.INIT_CWD)
 const packageLocation = path.join(process.env.INIT_CWD, 'package.json')
 const currPackage = fs.readJsonSync(packageLocation)
 const keystoneScripts = {
-  build: 'keystone',
-  dev: 'keystone --dev'
+  build: 'keystone-ssg',
+  dev: 'keystone-ssg --dev'
 }
 currPackage.scripts = currPackage.scripts ? keystoneScripts : { ...currPackage.scripts, ...keystoneScripts }
 

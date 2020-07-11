@@ -30,6 +30,7 @@ function endBuild () {
 }
 
 function startKeystone () {
+  divider()
   console.log()
   console.log(chalk`{bgBlueBright.bold.white  KEYSTONE }`)
 }
