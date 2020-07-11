@@ -16,6 +16,6 @@ module.exports = function (result) {
         result({ code: styles, fileExt: '.css' })
       }
     }),
-    //terser.terser()
+    terser.terser()
   ]
 }
