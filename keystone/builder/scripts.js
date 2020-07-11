@@ -1,4 +1,4 @@
-// const config = require('../config')
+const config = require('../config')
 const state = require('../state.js')
 const runRollup = require('./rollup')
 const path = require('path')
@@ -19,7 +19,7 @@ module.exports = async function (fileContent, fileObj, filePath) {
 }
 
 function adddynamicLinks (fileContent, fileObj) {
-  if (isHtml(fileObj)) {
+  if (config.dynamicLinks && isHtml(fileObj)) {
     return addToTag(fileContent, dynamicLinks, 'body')
   }
   return fileContent

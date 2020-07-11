@@ -5,90 +5,32 @@ const getEnv = (argKey, envKey) => {
   )
 }
 
+const config = require('./config.js')
 const state = require('./state.js')
 const runBuild = require('./build.js')
+const chalk = require('chalk')
 
 if (process.argv.includes('--dev')) {
   state.mode = 'dev'
 } else {
   state.mode = 'build'
 }
-console.log('Mode?', state.mode)
+
+console.log(chalk`{bgBlueBright.bold.white  KEYSTONE }`)
 
 runBuild().then(() => {
-  console.log('Built')
+  if (state.mode === 'build') {
+    console.log('___________________________________________________________________\n')
+    console.log(chalk`{green.bold Project successfully built}`)
+    console.log(chalk`{dim Distribute {white.bold ${config.served}} directory}`)
+    console.log()
+  }
 })
 
 if (state.mode === 'dev') {
   require('./dev.js')
 }
 
-// console.log(InteractionObserver)
-/*
-var sass = require('node-sass')
-
-var result = sass.renderSync({
-  file: './templates/test.scss',
-  outFile: './templates/test.css',
-  outputStyle: 'compressed'
-})
-
-// console.log(result.css)
-
-var fs = require('fs')
-
-fs.writeFile('./templates/test.css', result.css, function (err) {
-  if (err) throw err
-  console.log('Saved!')
-})
-*/
-/*
-const rollup = require('rollup')
-const babel = require('@rollup/plugin-babel')
-const buble = require('@rollup/plugin-buble')
-const scss = require('rollup-plugin-scss')
-
-// const fs = require('fs-extra')
-// const fil = fs.readFileSync('components/testindex.js', 'utf-8')
-// console.log('FILE:', babel.babel, 'BUBLE', buble, fil)
-
-let theCss
-const inputOptions = {
-  input: 'components/style.scss',
-  plugins: [
-    babel.babel({
-      babelHelpers: 'bundled',
-      minified: true,
-      presets: ['@babel/preset-env']
-    }),
-    scss({
-      outputStyle: 'compressed',
-      output (styles) {
-        theCss = styles
-      }
-    })
-  ]
+module.exports = {
+  config
 }
-
-const outputOptions = {
-  format: 'umd',
-  name: 'statis'
-}
-
-async function build () {
-  // create a bundle
-  try {
-    const bundle = await rollup.rollup(inputOptions)
-    return bundle.generate(outputOptions)
-  } catch (err) {
-    if (err) throw err
-    console.log('err')
-  }
-}
-
-build().then(bundle => {
-  console.log(bundle.output[0])
-  console.log(bundle.output[0].code)
-  console.log('STYLE', theCss)
-}).catch(console.log)
-*/

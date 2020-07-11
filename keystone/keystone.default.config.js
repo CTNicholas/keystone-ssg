@@ -30,7 +30,7 @@ const babelPlugin = {
 
 module.exports = {
   indexPath: '/',
-  dynamicLoad: true,
+  dynamicLinks: true,
   build: 'pages',
   served: 'public',
   watch: true,

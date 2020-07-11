@@ -103,11 +103,11 @@ async function addScript ({ attrs, fileObj }) {
   const filePath = checkPath(attrs, 'src')
   if (filePath) {
     const newName = path.parse(filePath).name
-    const publicPath = path.join('public', 'js', newName + '.js')
+    const publicPath = path.join(config.served, 'js', newName + '.js')
     const scriptContent = fs.readFileSync(filePath, 'utf-8')
     if (!alreadyCompiled(filePath)) {
       runRollup(scriptContent, fileObj, filePath).then(result => {
-        fs.ensureDirSync(path.join('public', 'js'))
+        fs.ensureDirSync(path.join(config.served, 'js'))
         fs.writeFileSync(publicPath, result.fileContent)
       })
     }
@@ -121,13 +121,13 @@ async function addStyle ({ attrs }) {
   const filePath = checkPath(attrs, 'styles')
   if (filePath) {
     const newName = path.parse(filePath).name
-    const publicPath = path.join('public', 'css', newName + '.css')
+    const publicPath = path.join(config.served, 'css', newName + '.css')
     if (!alreadyCompiled(filePath)) {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
       const newFile = await runRollup(fileContent, fileObj, filePath)
       newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent)
-      fs.ensureDirSync(path.join('public', 'css'))
+      fs.ensureDirSync(path.join(config.served, 'css'))
       fs.writeFileSync(publicPath, newFile.fileContent)
     }
     return `<link rel="stylesheet" href="${config.indexPath}css/${newName}.css">`
@@ -158,8 +158,8 @@ async function addAssets ({ attrs }) {
   const filePath = checkPath(attrs, 'assets')
   if (filePath) {
     const fileObj = path.parse(filePath)
-    const publicPath = path.join('public', 'assets', fileObj.base)
-    fs.ensureDirSync(path.join('public', 'assets'))
+    const publicPath = path.join(config.served, 'assets', fileObj.base)
+    fs.ensureDirSync(path.join(config.served, 'assets'))
     fs.copySync(filePath, publicPath)
     return `${config.indexPath}assets/${fileObj.base}`
   }

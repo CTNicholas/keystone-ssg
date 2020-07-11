@@ -1,1 +1,1 @@
-console.log('Keystone is up and running!')
+console.log(`Keystone is up and running!`)
