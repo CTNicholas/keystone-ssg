@@ -1,3 +1,15 @@
 module.exports = {
-  devServerIp: '192.168.1.107'
+  dynamicLinks: true,
+  indexPath: '/',
+  watched: [
+    'templates',
+    'pages',
+    'assets',
+    'components',
+    'src',
+    'styles'
+  ],
+  port: 8080,
+  portWs: 8081,
+  devServerIp: 'localhost'
 }

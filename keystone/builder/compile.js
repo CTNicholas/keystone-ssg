@@ -4,6 +4,7 @@ const runRollup = require('./rollup.js')
 const path = require('path')
 const state = require('../state.js')
 const logError = require('../server/log-error.js')
+const logServer = require('../server/log-Server.js')
 
 /*
  * Add a function to compileTypes to add a new substituion
@@ -100,21 +101,15 @@ async function addTemplate ({ attrs, slotContent }) {
 }
 
 async function addScript ({ attrs, fileObj }) {
+  const finalScript = await addImport({ attrs }, 'src')
   const filePath = checkPath(attrs, 'src')
-  if (filePath) {
-    const newName = path.parse(filePath).name
-    const publicPath = path.join(config.served, 'js', newName + '.js')
-    const scriptContent = fs.readFileSync(filePath, 'utf-8')
-    if (!alreadyCompiled(filePath)) {
-      runRollup(scriptContent, fileObj, filePath).then(result => {
-        fs.ensureDirSync(path.join(config.served, 'js'))
-        fs.writeFileSync(publicPath, result.fileContent)
-      })
-    }
-    return `<script src="${config.indexPath}js/${newName}.js"></script>`
-  } else {
-    return false
+  const newName = path.parse(filePath).name
+  const publicPath = path.join(config.served, 'js', newName + '.js')
+  if (!alreadyCompiled(filePath)) {
+    fs.ensureDirSync(path.join(config.served, 'js'))
+    await fs.writeFileSync(publicPath, finalScript)
   }
+  return `<script src="${config.indexPath}js/${newName}.js"></script>`
 }
 
 async function addStyle ({ attrs }) {
@@ -144,6 +139,7 @@ async function addImport ({ attrs }, defaultDir = 'components') {
       const fileContent = fs.readFileSync(filePath, 'utf-8')
       const newFile = await runRollup(fileContent, fileObj, filePath)
       newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent, fileObj)
+      logServer.bundling(filePath)
       return await newFile.fileContent
     } catch (error) {
       logError(error, { path: filePath })
@@ -161,6 +157,7 @@ async function addAssets ({ attrs }) {
     const publicPath = path.join(config.served, 'assets', fileObj.base)
     fs.ensureDirSync(path.join(config.served, 'assets'))
     fs.copySync(filePath, publicPath)
+    logServer.bundling(filePath)
     return `${config.indexPath}assets/${fileObj.base}`
   }
   return false

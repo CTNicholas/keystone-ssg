@@ -25,11 +25,10 @@ runBuild().then(() => {
     console.log(chalk`{dim Distribute {white.bold ${config.served}} directory}`)
     console.log()
   }
+  if (state.mode === 'dev') {
+    require('./dev.js')
+  }
 })
-
-if (state.mode === 'dev') {
-  require('./dev.js')
-}
 
 module.exports = {
   config

@@ -9,8 +9,10 @@ const getFileLocation = require('./builder/location.js')
 const writeFile = require('./builder/write.js')
 const addScripts = require('./builder/scripts.js')
 const logError = require('./server/log-error.js')
+const logServer = require('./server/log-Server.js')
 
 module.exports = function () {
+  logServer.startBuild()
   fs.emptyDirSync('public')
   state.filesBuilt = []
 
@@ -33,6 +35,7 @@ module.exports = function () {
       }
 
       await Promise.all(buildPromises)
+      logServer.endBuild()
       resolve()
     })
   }).catch(logError)

@@ -23,6 +23,16 @@ module.exports = function (fileContent, fileObj, filePath) {
     format: 'umd'
   }
 
+  async function build () {
+    try {
+      const bundle = await rollup.rollup(inputOptions)
+      const final = await bundle.generate(outputOptions)
+      return final
+    } catch (err) {
+      if (err) { logError(err) }
+    }
+  }
+
   return build().then(bundle => {
     let finalCode
     let finalName
@@ -35,13 +45,4 @@ module.exports = function (fileContent, fileObj, filePath) {
     }
     return { fileContent: finalCode, fileName: finalName }
   }).catch(logError)
-
-  async function build () {
-    try {
-      const bundle = await rollup.rollup(inputOptions)
-      return bundle.generate(outputOptions)
-    } catch (err) {
-      if (err) { logError(err) }
-    }
-  }
 }

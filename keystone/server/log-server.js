@@ -3,7 +3,27 @@ const chalk = require('chalk')
 module.exports = {
   fileChange,
   serverRunning,
-  divider
+  divider,
+  bundling,
+  startBuild,
+  endBuild
+}
+
+let bundleCount = 0
+
+function startBuild () {
+  bundleCount = 0
+  console.log()
+  console.log(chalk`{dim Bundling files...}`)
+}
+
+function bundling (file) {
+  console.log(chalk`${++bundleCount}. {cyanBright ${file}}`)
+}
+
+function endBuild () {
+  console.log()
+  console.log(chalk`{white.bold Complete}`)
 }
 
 function fileChange (changes) {

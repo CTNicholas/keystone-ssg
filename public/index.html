@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Keystone SSG">
+  <title>Keystone has been setup</title>
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+  <!-- STATIS: Dev server script, run without --dev variable for production -->
+ 
+  <script>
+  try { 
+    if (!window.STATIS_DEV_SCRIPT && window.location.port === '8080') {
+      window.STATIS_DEV_SCRIPT = true
+      ;(function () {
+        let alreadyClosed = false
+        startListen()
+        function startListen () {
+          const wsUri = "ws://localhost:8081/"
+          const ws = new WebSocket(wsUri)
+          let serverOpen = false
+          ws.onopen = message => {
+            console.log('STATIS: Development server started')
+            serverOpen = true
+            if (alreadyClosed) {
+              location.reload()
+            }
+          }
+          ws.onmessage = message => {
+            console.log('Message received:', message.data)
+            if (message.data === 'refresh') {
+              location.reload()
+            }
+          }
+          ws.onerror = message => {
+            console.log('STATIS: Error:', message)
+          }
+          ws.onclose = message => {
+            if (serverOpen === true) { 
+              console.error('STATIS: Development server closed')
+              alreadyClosed = true
+            }
+            serverOpen = false
+            setTimeout(startListen, 2000)
+          }
+        }
+      })()
+    }
+  } catch (err) { }
+  </script>
+</head>
+<body>
+  <header>
+  <img src="/assets/keystone-logo.png" />
+</header>
+  <script src="/js/console-log.js"></script>
+  (function (factory) {
+  typeof define === 'function' && define.amd ? define(factory) :
+  factory();
+}((function () { 'use strict';
+
+  function ban(){console.log("banana");}
+
+  console.log("Testing pls");var apple=function apple(){console.log("ANOTHER ONE");};apple();ban();
+
+})));
+
+  body{font-size:14px}
+
+  
+
+Keystone is up and running
+
+<script>
+
+whenPageReady(() => {
+  watchLinks()
+  window.addEventListener('popstate', onPopState)
+})
+
+function watchLinks () {
+  const links = document.querySelectorAll('a')
+  for (const link of links) {
+    link.addEventListener('click', linkClicked)
+  }
+}
+
+function linkClicked (event) {
+  if (linkAllowed(event.target)) {
+    event.preventDefault()
+    getPage(event.target.getAttribute('href')).then(newPage => {
+      changePage(newPage, event.target.href)
+    })
+  }
+}
+
+function linkAllowed (target) {
+  const sameHost = location.host === target.host
+  const notSamePage =
+    location.host + location.pathname + location.search !==
+    target.host + target.pathname + target.search
+  return sameHost && notSamePage
+}
+
+function changePage (newPage, url, popstate = false) {
+  const state = getPageState()
+  document.open()
+  document.write(newPage)
+  document.close()
+  updateHistory(url, popstate, state)
+}
+
+function updateHistory (url, popstate, state) {
+  if (!popstate) {
+    history.pushState(state, document.title, url)
+  } 
+}
+
+function getPageState () {
+  const { x, y } = getScrollPos()
+  return {
+    scroll: {
+      x,
+      y
+    }
+  }
+}
+
+function getScrollPos () {
+  const y = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0
+  const x = window.scrollX || document.documentElement.scrollLeft || document.body.scrollLeft || 0
+  return { x: x, y: y }
+}
+
+function setScrollPos (x, y) {
+  whenPageReady(() => {
+    console.log('Scroll fix', x, y)
+    window.scrollTo(x, y)
+  })
+}
+
+function onPopState (event) {
+  const lastUrl = location.href
+  getPage(lastUrl).then(newPage => {
+    changePage(newPage, lastUrl, true)
+    setScrollPos(event.state.scroll.x, event.state.scroll.y)
+  })
+}
+
+async function getPage (url) {
+  try {
+    return fetch(url)
+      .then(response => response.text())
+      .catch(() => console.log)
+  } catch (err) { 
+    console.log(err)
+    window.location(url)
+  }
+}
+
+function whenPageReady (func) {
+  if (document.readyState === 'interactive' ||
+    document.readyState === 'complete') {
+    func()
+  } else {
+    document.addEventListener('DOMContentLoaded', () => {
+      func()
+    })
+  }
+}
+</script></body>
+</html>
