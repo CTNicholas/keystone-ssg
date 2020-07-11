@@ -125,6 +125,7 @@ async function addStyle ({ attrs }) {
       fs.ensureDirSync(path.join(config.served, 'css'))
       fs.writeFileSync(publicPath, newFile.fileContent)
     }
+    logServer.bundling(filePath)
     return `<link rel="stylesheet" href="${config.indexPath}css/${newName}.css">`
   } else {
     return false

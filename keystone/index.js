@@ -8,6 +8,7 @@ const getEnv = (argKey, envKey) => {
 const config = require('./config.js')
 const state = require('./state.js')
 const runBuild = require('./build.js')
+const logServer = require('./server/log-server.js')
 const chalk = require('chalk')
 
 if (process.argv.includes('--dev')) {
@@ -16,14 +17,11 @@ if (process.argv.includes('--dev')) {
   state.mode = 'build'
 }
 
-console.log(chalk`{bgBlueBright.bold.white  KEYSTONE }`)
+logServer.startKeystone()
 
 runBuild().then(() => {
   if (state.mode === 'build') {
-    console.log('___________________________________________________________________\n')
-    console.log(chalk`{green.bold Project successfully built}`)
-    console.log(chalk`{dim Distribute {white.bold ${config.served}} directory}`)
-    console.log()
+    logServer.endBuildMode()
   }
   if (state.mode === 'dev') {
     require('./dev.js')

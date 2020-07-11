@@ -1,3 +1,4 @@
+const config = require('../config.js')
 const chalk = require('chalk')
 
 module.exports = {
@@ -6,7 +7,9 @@ module.exports = {
   divider,
   bundling,
   startBuild,
-  endBuild
+  endBuild,
+  startKeystone,
+  endBuildMode
 }
 
 let bundleCount = 0
@@ -24,6 +27,17 @@ function bundling (file) {
 function endBuild () {
   console.log()
   console.log(chalk`{white.bold Complete}`)
+}
+
+function startKeystone () {
+  console.log()
+  console.log(chalk`{bgBlueBright.bold.white  KEYSTONE }`)
+}
+
+function endBuildMode () {
+  divider()
+  console.log(chalk`{green.bold Project successfully built:} {dim Distribute {white.bold ${config.served}} directory}`)
+  console.log()
 }
 
 function fileChange (changes) {

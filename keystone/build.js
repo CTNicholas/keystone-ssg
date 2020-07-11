@@ -31,6 +31,7 @@ module.exports = function () {
 
       const buildPromises = []
       for (const filePath of files) {
+        logServer.bundling(filePath)
         buildPromises.push(buildFile(filePath))
       }
 

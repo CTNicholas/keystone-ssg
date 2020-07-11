@@ -1,11 +1,1 @@
-import ban from './ban.js'
-console.log(`Testing pls`)
-
-const apple = () => {
-  console.log('ANOTHER ONE')
-}
-
-apple()
-
-
-ban()
+console.log(`Keystone is up and running!`)
