@@ -1,6 +1,6 @@
 {
   "name": "keystone-ssg",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "homepage": "https://github.com/CTNicholas/keystone-ssg#readme",
   "main": "src/index.js",
