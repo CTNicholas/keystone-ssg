@@ -155,7 +155,15 @@ async function addImport ({ attrs }, defaultDir = 'components') {
 }
 
 async function addAssets ({ attrs }) {
-
+  const filePath = checkPath(attrs, 'assets')
+  if (filePath) {
+    const fileObj = path.parse(filePath)
+    const publicPath = path.join('public', 'assets', fileObj.base)
+    fs.ensureDirSync(path.join('public', 'assets'))
+    fs.copySync(filePath, publicPath)
+    return `${config.indexPath}assets/${fileObj.base}`
+  }
+  return false
 }
 
 async function addLinks ({ attrs }) {
