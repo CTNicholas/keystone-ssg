@@ -22,6 +22,7 @@ const compileTypes = {
   template: addTemplate,
   import: addImport,
   script: addScript,
+  asset: addAssets,
   style: addStyle,
   link: addLinks,
   var: addVars
@@ -92,19 +93,18 @@ function addSlots (content, slotContent) {
 }
 
 async function addTemplate ({ attrs, slotContent }) {
-  return addImport({ attrs }).then(res => {
+  return addImport({ attrs }, 'templates').then(res => {
     slotContent.slot = res
     return ''
   })
 }
 
 async function addScript ({ attrs, fileObj }) {
-  if ('src' in attrs) {
-    const filePath = path.normalize(attrs.src)
+  const filePath = checkPath(attrs, 'src')
+  if (filePath) {
     const newName = path.parse(filePath).name
-    const newPath = path.join('js', newName + '.js')
+    const publicPath = path.join('public', 'js', newName + '.js')
     const scriptContent = fs.readFileSync(filePath, 'utf-8')
-    const publicPath = path.join('public', newPath)
     if (!alreadyCompiled(filePath)) {
       runRollup(scriptContent, fileObj, filePath).then(result => {
         fs.ensureDirSync(path.join('public', 'js'))
@@ -118,11 +118,10 @@ async function addScript ({ attrs, fileObj }) {
 }
 
 async function addStyle ({ attrs }) {
-  if ('src' in attrs) {
-    const filePath = path.normalize(attrs.src)
+  const filePath = checkPath(attrs, 'styles')
+  if (filePath) {
     const newName = path.parse(filePath).name
-    const newPath = path.join('css', newName + '.css')
-    const publicPath = path.join('public', newPath)
+    const publicPath = path.join('public', 'css', newName + '.css')
     if (!alreadyCompiled(filePath)) {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
@@ -137,19 +136,15 @@ async function addStyle ({ attrs }) {
   }
 }
 
-async function addImport ({ attrs }) {
-  if ('src' in attrs) {
-    const filePath = path.normalize(attrs.src)
+async function addImport ({ attrs }, defaultDir = 'components') {
+  const filePath = checkPath(attrs, defaultDir)
+  if (filePath) {
     try {
-      if (fs.existsSync(filePath)) {
-        const fileObj = path.parse(filePath)
-        const fileContent = fs.readFileSync(filePath, 'utf-8')
-        const newFile = await runRollup(fileContent, fileObj, filePath)
-        newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent, fileObj)
-        return await newFile.fileContent
-      } else {
-        return false
-      }
+      const fileObj = path.parse(filePath)
+      const fileContent = fs.readFileSync(filePath, 'utf-8')
+      const newFile = await runRollup(fileContent, fileObj, filePath)
+      newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent, fileObj)
+      return await newFile.fileContent
     } catch (error) {
       logError(error, { path: filePath })
       return false
@@ -157,6 +152,10 @@ async function addImport ({ attrs }) {
   } else {
     return false
   }
+}
+
+async function addAssets ({ attrs }) {
+
 }
 
 async function addLinks ({ attrs }) {
@@ -191,6 +190,29 @@ function getAttributes (attrString) {
     res[a1] = a3 || true
   })
   return res
+}
+
+function checkPath (attrs, defaultDir) {
+  try {
+    if ('src' in attrs) {
+      return dirExists(attrs.src)// Return if src is valid
+    }
+    for (const [key, val] of Object.entries(attrs)) {
+      if (val === true) {
+        return dirExists(key, true) // Returns first attribute key that is a real path
+      }
+    }
+    return false // Else return false
+  } catch (error) {
+    logError(error, { path: defaultDir })
+    return false
+  }
+
+  function dirExists (currPath, addDir = false) {
+    let normalPath = path.normalize(currPath)
+    if (addDir) { normalPath = path.join(defaultDir, normalPath) }
+    return fs.existsSync(normalPath) ? normalPath : false
+  }
 }
 
 function removeTrailingTags (text) {

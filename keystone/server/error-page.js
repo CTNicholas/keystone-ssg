@@ -1,5 +1,9 @@
-const wsScript = require('../scripts/dev-script.js')
 const config = require('../config.js')
+const wsScript = require('../scripts/dev-script.js')
+// const fs = require('fs-extra')
+
+const emptyDir = false
+// emptyDir = fs.readdirSync(config.build).length === 0
 
 module.exports = `
 <html>
@@ -14,8 +18,8 @@ module.exports = `
   <body>
     <h1>
       Error
+      ${emptyDir ? `<small>${config.build} folder is empty. Place .html files here and restart server.</small>` : ''}
       <small>Incorrect URL, or check server console for errors.</small>
-      <small>Ensure that there are .html files in the ${config.build} folder. If not, fix this and restart server.</small>
     </h1>
   </body>
 </html>
