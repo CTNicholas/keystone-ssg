@@ -59,7 +59,7 @@ async function buildFile (filePath) {
 
 async function copyAssets () {
   logServer.bundling('assets')
-  return await fs.copy('assets', path.join(config.served, 'assets'))
+  return await fs.copy('assets', config.served)
 }
 
 function buildSplashPage () {
