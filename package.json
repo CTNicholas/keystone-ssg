@@ -5,12 +5,15 @@
   "homepage": "https://github.com/CTNicholas/keystone-ssg#readme",
   "main": "src/index.js",
   "scripts": {
-    "postinstall": "node ./keystone/bin/install.js",
+    "postinstall": "node ./keystone/bin/install.js && git init",
     "dev": "node ./keystone/index.js --dev",
     "build": "node ./keystone/index.js"
   },
   "author": "CTNicholas",
   "license": "ISC",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "bin": "./keystone/bin/keystone.js",
   "dependencies": {
     "@babel/core": "^7.10.2",

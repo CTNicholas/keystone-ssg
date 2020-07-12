@@ -63,7 +63,11 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
           asyncResults[`${match}${p1}${p2}`].content = res === false ? match : res
           resolve()
           return match
-        }).catch(error => logError(error, { name: fileName }))
+        }).catch(error => {
+          logError(error, { name: fileName })
+          asyncResults[`${match}${p1}${p2}`].content = match
+          return match
+        })
       } else {
         asyncResults[`${match}${p1}${p2}`].content = match
         resolve()
