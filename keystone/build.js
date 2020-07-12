@@ -13,7 +13,7 @@ const logServer = require('./server/log-Server.js')
 
 module.exports = function () {
   logServer.startBuild()
-  fs.emptyDirSync('public')
+  fs.emptyDirSync(config.served)
   state.filesBuilt = []
 
   if (!fs.existsSync(config.build)) {
@@ -30,6 +30,7 @@ module.exports = function () {
       }
 
       const buildPromises = []
+      buildPromises.push(copyAssets())
       for (const filePath of files) {
         logServer.bundling(filePath)
         buildPromises.push(buildFile(filePath))
@@ -56,8 +57,14 @@ async function buildFile (filePath) {
   } catch (err) { logError(err, { path: filePath }) }
 }
 
+async function copyAssets () {
+  logServer.bundling('assets')
+  return await fs.copy('assets', path.join(config.served, 'assets'))
+}
+
 function buildSplashPage () {
   const emptyPages = require('./splash.js')
   fs.appendFileSync(path.join(config.build, 'index.html'), emptyPages)
   console.log('No index.html, default splash page built')
 }
+

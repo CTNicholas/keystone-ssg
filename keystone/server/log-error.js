@@ -20,13 +20,13 @@ module.exports = function (error, info) {
 }
 
 function enoent (error, { path, name }) {
-  console.log(chalk`{gray Code:} {whiteBright ${error.code}}`)
-  console.log(chalk`{gray File:} {whiteBright.bold ${path || name}}`)
-  console.log(chalk`{gray Info:} {whiteBright File missing or incorrect path referenced}: {inverse.bold  ${error.path} }`)
+  console.log(chalk` {gray Code:} {whiteBright ${error.code}}`)
+  console.log(chalk` {gray File:} {whiteBright.bold ${path || name}}`)
+  console.log(chalk` {gray Info:} {whiteBright File missing or incorrect path referenced}: {inverse.bold  ${error.path} }`)
 }
 
 function defaultError (error) {
-  console.log('Error: ', error.code)
+  console.log(' Error: ', error.code)
 }
 
 function startError (error) {
@@ -37,7 +37,7 @@ function startError (error) {
 }
 
 function endError () {
-  console.log(chalk`{gray (stack trace above)}`)
+  console.log(chalk` {gray (stack trace above)}`)
   serverLog.divider()
 }
 

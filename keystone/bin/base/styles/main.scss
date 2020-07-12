@@ -1,0 +1,28 @@
+@font-face {
+  font-family: 'InterRegular';
+  src: url(/assets/Inter-Regular.ttf) format('truetype');
+}
+
+body {
+  font-family: 'InterRegular';
+  color: rgb(48, 46, 46);
+  
+  main {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+a {
+  display: inline-block;
+  color: #00a048;
+
+  &.button{
+    padding: 6px 12px;
+    text-decoration: none;
+    background: #23D170;
+    color: #fff;
+  }
+}

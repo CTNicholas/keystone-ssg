@@ -4,14 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="<_var desc default='Keystone SSG' />">
-  <title><_var title default='Kesystone default title' /></title>
+  <title><_var title default='Keystone default title' /></title>
   <_style main.scss />
-  <_script console-log.js />
+  <_script main.js />
 </head>
 <body>
-  <_import header.html />
-  
-  <_slot />
-
+  <main>
+    <div>
+      <_import header.html />  
+      <_slot />
+    </div>
+  </main>
 </body>
 </html>

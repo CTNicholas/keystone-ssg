@@ -103,13 +103,16 @@ async function addTemplate ({ attrs, slotContent }) {
 async function addScript ({ attrs, fileObj }) {
   const finalScript = await addImport({ attrs }, 'src')
   const filePath = checkPath(attrs, 'src')
-  const newName = path.parse(filePath).name
-  const publicPath = path.join(config.served, 'js', newName + '.js')
-  if (!alreadyCompiled(filePath)) {
-    fs.ensureDirSync(path.join(config.served, 'js'))
-    await fs.writeFileSync(publicPath, finalScript)
+  if (filePath) {
+    const newName = path.parse(filePath).name
+    const publicPath = path.join(config.served, 'js', newName + '.js')
+    if (!alreadyCompiled(filePath)) {
+      fs.ensureDirSync(path.join(config.served, 'js'))
+      await fs.writeFileSync(publicPath, finalScript)
+    }
+    return `<script src="${config.indexPath}js/${newName}.js"></script>`
   }
-  return `<script src="${config.indexPath}js/${newName}.js"></script>`
+  return false
 }
 
 async function addStyle ({ attrs }) {
@@ -156,8 +159,8 @@ async function addAssets ({ attrs }) {
   if (filePath) {
     const fileObj = path.parse(filePath)
     const publicPath = path.join(config.served, 'assets', fileObj.base)
-    fs.ensureDirSync(path.join(config.served, 'assets'))
-    fs.copySync(filePath, publicPath)
+    // fs.ensureDirSync(path.join(config.served, 'assets'))
+    // fs.copySync(filePath, publicPath)
     logServer.bundling(filePath)
     return `${config.indexPath}assets/${fileObj.base}`
   }

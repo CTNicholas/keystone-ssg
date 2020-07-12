@@ -1,3 +1,4 @@
+const config = require('../config.js')
 const path = require('path')
 
 const dirFuncs = {
@@ -29,7 +30,7 @@ module.exports = function (filePath) {
       return styleLocation(filePath, fileObj)
     default:
       console.log('err pls', fileObj.base)
-      return path.join('public', 'err', fileObj.base)
+      return path.join(config.served, 'err', fileObj.base)
   }
 }
 
@@ -45,18 +46,18 @@ function pagesLocation (filePath, fileObj) {
   if (fileObj.ext === '.html' || fileObj.ext === '.htm') {
     const fileSplit = fileObj.dir.split(path.sep).length > 1 ? fileObj.dir.split(path.sep).slice(1).join(path.sep) : ''
     if (fileObj.base === 'index.html' || fileObj.ext === 'index.htm') {
-      return path.join('public', fileSplit, 'index.html')
+      return path.join(config.served, fileSplit, 'index.html')
     } else {
-      return path.join('public', fileSplit, fileObj.name, 'index.html')
+      return path.join(config.served, fileSplit, fileObj.name, 'index.html')
     }
   }
   return 'err/' + fileObj.base
 }
 
 function styleLocation (filePath, fileObj) {
-  return path.join('public', 'css', fileObj.base)
+  return path.join(config.served, 'css', fileObj.base)
 }
 
 function scriptLocation (filePath, fileObj) {
-  return path.join('public', 'js', fileObj.base)
+  return path.join(config.served, 'js', fileObj.base)
 }
