@@ -1,7 +1,8 @@
 {
   "name": "keystone-ssg",
   "version": "1.0.7",
-  "description": "",
+  "description": "Zero config static-site generator. Templates, partials, routing, Babel, SCSS, JS bundling, minifying, dynamic links, auto-refresh dev server",
+  "keywords": ["static site generator", "static", "site", "website", "generator", "builder", "bundler", "ssg", "babel", "scss", "sass", "partials", "templates", "routing", "simple", "quick", "easy", "install", "no config", "no setup", "config", "setup", "statis", "keystone"],
   "homepage": "https://github.com/CTNicholas/keystone-ssg#readme",
   "main": "src/index.js",
   "scripts": {
@@ -11,6 +12,10 @@
   },
   "author": "CTNicholas",
   "license": "ISC",
+  "repository": "github:CTNicholas/keystone-ssg",
+  "bugs": {
+    "url": "https://github.com/CTNicholas/keystone-ssg/issues"
+  },
   "bin": "./keystone/bin/keystone.js",
   "dependencies": {
     "@babel/core": "^7.10.2",

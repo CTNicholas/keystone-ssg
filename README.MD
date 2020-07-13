@@ -94,15 +94,15 @@ dynamicLinks | Enables dynamically loaded local links on your Keystone website, 
 indexPath | The root directory of your website | '/'
 port | The dev server port, localhost:**8080** | 8080
 portWs | A second port used for the dev server | 8081
-devServerIp | The location of the dev server, **localhost**:8080 | 'localhost'
+devServerIp | The location of the dev server, **localhost**:8080. Replace with your device's local IP to view dev server on local devices (example: '192.168.1.103'). | 'localhost'
 watched | The directories watched by the Keystone dev server, that will force a recompilation and page refresh when files are edited | ['templates', 'pages', 'assets', 'components', 'src', 'styles']
 build | The content page directory | 'pages'
-served | The directory containig the generated website | 'public'
+served | The directory containing the generated website | 'public'
 
 ## Default directory layout
 ```
 | empty-keystone-project
---| .git
+--| .git/
 --| assets/
 --| components/
 --| pages/
