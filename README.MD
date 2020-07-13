@@ -64,7 +64,7 @@ The `/styles` folder is used for your CSS/SCSS. The following tag will be conver
 ```html
 <_style main.scss />
 ```
- SCSS is fully supported.
+All `node-sass` features are fully supported, including `@import`.
 ## Assets
 Static assets are placed here, ie fonts, images, icons. Everything here will be transferred to it's corresponding folder in the root directory, for example:
 ```
@@ -74,7 +74,8 @@ Static assets are placed here, ie fonts, images, icons. Everything here will be 
 # Notes
 ## Keystone HTML tags
 - Every custom Keystone HTML tag can be used *anywhere* within an HTML file, even within other HTML attributes.
-- For all custom Keystone tags, you can alternatively use a src attribute to target a file in any folder: `<_template src='myfolder/myfile.html' />`
+- For all custom Keystone tags, you can alternatively use a src attribute to target a file in any folder: `<_template src='myfolder/myfile.html' />`. 
+- All paths are relative to the folder containing `package.json`, do not use an initial slash unless you'd like to access a file outside of the project.
 - Keystone HTML tag attributes can use 'single' "double" or \`backtick\` quote marks.
 ## Dynamic loading
 - Dynamic loading fetches the local website link and replaces the content of the current page with the new page, without reloading and switching pages.

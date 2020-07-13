@@ -5,6 +5,10 @@ const path = require('path')
 
 fs.copySync('keystone/bin/base', process.env.INIT_CWD)
 
+fs.ensureDirSync(path.join(process.env.INIT_CWD, '.git'))
+fs.copySync('keystone/bin/git', path.join(process.env.INIT_CWD, '.git'))
+fs.copySync('keystone/bin/gitIgnore', path.join(process.env.INIT_CWD, '.gitignore'))
+
 const packageLocation = path.join(process.env.INIT_CWD, 'package.json')
 const keystoneScripts = {
   build: 'keystone-ssg',
