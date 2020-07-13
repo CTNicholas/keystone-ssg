@@ -1,6 +1,6 @@
 {
   "name": "keystone-ssg",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Zero config static-site generator. Templates, partials, routing, Babel, SCSS, JS bundling, minifying, dynamic links, auto-refresh dev server",
   "keywords": [
     "static site generator",
