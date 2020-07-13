@@ -61,7 +61,7 @@ Place Javascript files within the `/src` folder. The following tag will be conve
 ES6 imports are fully supported, and the resulting file will be transpiled with Babel, bundled with Rollup, and minimised.
 ## Styles
 The `/styles` folder is used for your CSS/SCSS. The following tag will be converted to a regular `<link>` css import tag, linking to your compiled `/styles/main.scss` file:
-```
+```html
 <_style main.scss />
 ```
  SCSS is fully supported.
