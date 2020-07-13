@@ -1,6 +1,6 @@
 ![Keystone logo](https://github.com/CTNicholas/keystone-ssg/raw/master/keystone_logo_small.png)
 # Why Keystone?
-Keystone is a static-site generator ideal for quickly building small websites. No setup required, and a collection of handy features enabled by default.
+Keystone is a static-site generator ideal for quickly building small websites. No setup required, and a collection of handy features are enabled by default.
 # Features
 - Easy install & setup, one command and ready to go
 - Auto-refresh development server
@@ -66,15 +66,20 @@ The `/styles` folder is used for your CSS/SCSS. The following tag will be conver
 ```
  SCSS is fully supported.
 ## Assets
-Static assets are placed here, ie fonts, images, icons. Everything here will be transferred to it's corresponding folder in the assets directory, for example:
+Static assets are placed here, ie fonts, images, icons. Everything here will be transferred to it's corresponding folder in the root directory, for example:
 ```
 /assets/favicon.ico -> /public/favicon.ico
 /assets/fonts/fontname.ttf -> /public/fonts/fontname.ttf
 ```
 # Notes
+## Keystone HTML tags
 - Every custom Keystone HTML tag can be used *anywhere* within an HTML file, even within other HTML attributes.
 - For all custom Keystone tags, you can alternatively use a src attribute to target a file in any folder: `<_template src='myfolder/myfile.html' />`
 - Keystone HTML tag attributes can use 'single' "double" or \`backtick\` quote marks.
+## Dynamic loading
+- Dynamic loading fetches the local website link and replaces the content of the current page with the new page, without reloading and switching pages.
+- While dynamic loading is enabled, page state (eg input values, scroll position) is not saved when using the back button.
+- Disable dynamic loading in keystone.config.js.
 
 # API
 ## Tags

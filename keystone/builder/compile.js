@@ -163,8 +163,8 @@ async function addAssets ({ attrs }) {
   if (filePath) {
     const fileObj = path.parse(filePath)
     const publicPath = path.join(config.served, 'assets', fileObj.base)
-    // fs.ensureDirSync(path.join(config.served, 'assets'))
-    // fs.copySync(filePath, publicPath)
+    fs.ensureDirSync(path.join(config.served, 'assets'))
+    fs.copySync(filePath, publicPath)
     logServer.bundling(filePath)
     return `${config.indexPath}assets/${fileObj.base}`
   }
@@ -189,7 +189,7 @@ async function addVars ({ attrs, fileObj, vars }) {
   if (!result) {
     result = attrs.default || ''
     if (!attrs.default) {
-      console.log(`_VAR UNDEFINED in ${fileObj.base}:`, Object.keys(vars).join())
+      // console.log(`_VAR UNDEFINED in ${fileObj.base}:`, Object.keys(vars).join())
     }
   }
   return result
