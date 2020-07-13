@@ -187,7 +187,10 @@ async function addVars ({ attrs, fileObj, vars }) {
     }
   }
   if (!result) {
-    result = attrs.default || '_VAR UNDEFINED: ' + Object.keys(vars).join()
+    result = attrs.default || ''
+    if (!attrs.default) {
+      console.log(`_VAR UNDEFINED in ${fileObj.base}:`, Object.keys(vars).join())
+    }
   }
   return result
 }
