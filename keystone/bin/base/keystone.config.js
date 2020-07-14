@@ -1,5 +1,6 @@
 module.exports = {
   dynamicLinks: true,
+  searchFile: true,
   indexPath: '/',
   port: 8080,
   portWs: 8081,

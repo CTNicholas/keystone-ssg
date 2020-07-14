@@ -10,6 +10,7 @@ const writeFile = require('./builder/write.js')
 const addScripts = require('./builder/scripts.js')
 const logError = require('./server/log-error.js')
 const logServer = require('./server/log-Server.js')
+const searchFile = require('./builder/search.js')
 
 module.exports = function () {
   logServer.startBuild()
@@ -37,6 +38,7 @@ module.exports = function () {
       }
 
       await Promise.all(buildPromises)
+      searchFile.create()
       logServer.endBuild()
       resolve()
     })
@@ -53,6 +55,7 @@ async function buildFile (filePath) {
     const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
     const finalPath = getFileLocation(newPath)
     const finalScriptedContent = await addScripts(finalFileContent, path.parse(finalPath), finalPath)
+    searchFile.add(finalScriptedContent, finalPath)
     writeFile(finalPath, finalScriptedContent)
   } catch (err) { logError(err, { path: filePath }) }
 }

@@ -3,6 +3,7 @@ const port = 8080
 module.exports = {
   indexPath: '/',
   dynamicLinks: true,
+  searchFile: true,
   build: 'pages',
   served: 'public',
   watch: true,

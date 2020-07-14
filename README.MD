@@ -9,6 +9,7 @@ Keystone is a static-site generator ideal for quickly building small websites. N
 - Babel & SCSS enabled by default
 - JS & CSS minifying and bundling (Rollup)
 - Dynamic link loading (no page reload)
+- Search index file generator, for easy website searching
 
 # Getting Started
 ## Install
@@ -49,10 +50,11 @@ Using the following as a template tag inside of `/pages` will allow you to enter
 <_template basic.html title="A custom title" />
 ```
 ## Components
-The `/components` folder is simply used for reusable components. The `<_import>` tag is used to import components into other HTML files, an example of which is inside `/templates/basic.html`
+The `/components` folder is simply used for reusable components. The `<_import>` tag is used to import components into other HTML files, an example of which is inside `/templates/basic.html`.
 ```html
 <_import header.html />
 ```
+The `<_import>` tag can also be used to import the contents of any other kind of file (JS, SCSS etc), after first bundling the source.
 ## Src
 Place Javascript files within the `/src` folder. The following tag will be converted to a regular `<script>` import tag, linking to your file `/src/main.js`:
 ```html
@@ -81,6 +83,11 @@ Static assets are placed here, ie fonts, images, icons. Everything here will be 
 - Dynamic loading fetches the local website link and replaces the content of the current page with the new page, without reloading and switching pages.
 - While dynamic loading is enabled, page state (eg input values, scroll position) is not saved when using the back button.
 - Disable dynamic loading in keystone.config.js.
+## Search index generator
+- The search index generator generates a file, `search.json`, in the root directory This is a JSON array containing an object for each page, listing the text content, title, and path of the page.
+- All HTML tags are stripped from the page, and only the text is kept and stored.
+- This file can be fetched and queried be a website search function, to easily find which page contains which content.
+- Disable the search bar helper in keystone.config.js.
 
 # API
 ## Tags
@@ -97,6 +104,7 @@ The config file is `keystone.config.js`
 Option | Description | Default
 -|-|-
 dynamicLinks | Enables dynamically loaded local links on your Keystone website, no refresh needed | true
+searchFile | Generates `search.json` in the root directory | true
 indexPath | The root directory of your website | '/'
 port | The dev server port, localhost:**8080** | 8080
 portWs | A second port used for the dev server | 8081
