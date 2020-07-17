@@ -6,8 +6,9 @@ Keystone is a static-site generator ideal for quickly building small websites. N
 - Auto-refresh development server
 - Use templates and reusable partials/imports, with slots
 - Automatic routing, just upload `/public` and you're ready to go
+- Built-in markdown support
 - Babel & SCSS enabled by default
-- JS & CSS minifying and bundling (Rollup)
+- JS & CSS minifying and bundling (with Rollup)
 - Dynamic link loading (no page reload)
 - Search index file generator, for easy website searching
 
@@ -32,12 +33,12 @@ $ npm run build
 There are six important directories within a Keystone project, each with their own purpose:
 
 ## Pages
-Every HTML file in the pages folder corresponds to a page on your website. There are two files in the example project in here, try opening `index.html`. The automatic routing will bundle the files to the `/public` folder upon running `npm run build` like so:
+Every HTML `.html` & markdown `.md` file in the pages folder corresponds to a page on your website. There are two files in the example project in here, try opening `index.html`. The automatic routing will bundle the files to the `/public` folder upon running `npm run build` like so:
 ```
 /pages/index.html   ->  /public/index.html
-/pages/example.html ->  /public/example/index.html
+/pages/example.md ->  /public/example/index.html
 ```
-You may have noticed that `index.html` has the following tag: `<_template basic.html />`. This places the contents of `index.html` inside the slotted template file at `/templates/basic.html`
+You may have noticed that `index.html` has the following tag: `<_template basic.html />`. This places the contents of `index.html` inside the slotted template file at `/templates/basic.html`. This custom HTML tag format works inside `.md` files too.
 ## Templates
 Templates can be used with `/pages` to provide a ready-made framework for your pages. Use a `<_slot />` tag within the template file to provide an entry point for your content. Open `/templates/basic.html` and look for:
 ```html
@@ -60,7 +61,7 @@ Place Javascript files within the `/src` folder. The following tag will be conve
 ```html
 <_script main.js />
 ```
-ES6 imports are fully supported, and the resulting file will be transpiled with Babel, bundled with Rollup, and minimised.
+ES6 imports are fully supported, and the resulting file will be transpiled with Babel, bundled with Rollup, and minified.
 ## Styles
 The `/styles` folder is used for your CSS/SCSS. The following tag will be converted to a regular `<link>` css import tag, linking to your compiled `/styles/main.scss` file:
 ```html
@@ -75,8 +76,8 @@ Static assets are placed here, ie fonts, images, icons. Everything here will be 
 ```
 # Notes
 ## Keystone HTML tags
-- Every custom Keystone HTML tag can be used *anywhere* within an HTML file, even within other HTML attributes.
-- For all custom Keystone tags, you can alternatively use a src attribute to target a file in any folder: `<_template src='myfolder/myfile.html' />`. 
+- Every custom Keystone HTML tag can be used *anywhere* within an HTML file, even within other HTML attributes, apart from in other Keystone tags.
+- For all custom Keystone tags, alternatively, you can use a src attribute to target a file in any folder: `<_template src='myfolder/myfile.html' />`. 
 - All paths are relative to the folder containing `package.json`, do not use an initial slash unless you'd like to access a file outside of the project.
 - Keystone HTML tag attributes can use 'single' "double" or \`backtick\` quote marks.
 ## Dynamic loading

@@ -1,4 +1,5 @@
 const rollup = require('rollup')
+const marked = require('marked')
 const defaultPlugins = require('../config.rollup.js')
 const logError = require('../server/log-error.js')
 
@@ -6,6 +7,13 @@ module.exports = function (fileContent, fileObj, filePath) {
   if (fileObj && (fileObj.ext === '.html' || fileObj.ext === '.htm')) {
     return new Promise((resolve, reject) => {
       resolve({ fileContent: fileContent, fileName: fileObj.base })
+    }).catch(logError)
+  }
+
+  if (fileObj && fileObj.ext === '.md') {
+    let result = marked(fileContent).replace('&lt;', '<').replace('&gt;', '>')
+    return new Promise((resolve, reject) => {
+      resolve({ fileContent: result, fileName: fileObj.name + '.html' })
     }).catch(logError)
   }
 

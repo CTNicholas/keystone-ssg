@@ -47,7 +47,8 @@ function removeTag (html, tag) {
 }
 
 function getTitle (html) {
-  return html.match("<title>((?:.|\n)*?)</title>")[1]
+  const title = html.match("<title>((?:.|\n)*?)</title>")
+  return title ? title[1] : ''
 }
 
 function getUrl (filePath) {

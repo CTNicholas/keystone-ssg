@@ -1,4 +1,5 @@
 const config = require('../config.js')
+const state = require('../state.js')
 const chalk = require('chalk')
 
 module.exports = {

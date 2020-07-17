@@ -1,16 +1,19 @@
 const config = require('./config')
+const state = require('./state.js')
+
 const fs = require('fs-extra')
 const path = require('path')
 const recursive = require('recursive-readdir')
-const runRollup = require('./builder/rollup')
-const compile = require('./builder/compile.js')
-const state = require('./state.js')
-const getFileLocation = require('./builder/location.js')
-const writeFile = require('./builder/write.js')
-const addScripts = require('./builder/scripts.js')
+
+const ROLLUP = require('./builder/rollup.js')
+const COMPILE = require('./builder/compile.js')
+const LOCATION = require('./builder/location.js')
+const SCRIPTS = require('./builder/scripts.js')
+const SEARCH = require('./builder/search.js')
+const WRITE = require('./builder/write.js')
+
 const logError = require('./server/log-error.js')
-const logServer = require('./server/log-Server.js')
-const searchFile = require('./builder/search.js')
+const logServer = require('./server/log-server.js')
 
 module.exports = function () {
   logServer.startBuild()
@@ -38,7 +41,7 @@ module.exports = function () {
       }
 
       await Promise.all(buildPromises)
-      searchFile.create()
+      SEARCH.create()
       logServer.endBuild()
       resolve()
     })
@@ -50,13 +53,13 @@ async function buildFile (filePath) {
     state.filesBuilt.push(path.normalize(filePath))
     const fileObj = path.parse(filePath)
     const fileContent = fs.readFileSync(filePath, 'utf-8')
-    const newFile = await runRollup(fileContent, fileObj, filePath)
-    const finalFileContent = await compile(newFile, fileObj)
+    const newFile = await ROLLUP(fileContent, fileObj, filePath)
+    const finalFileContent = await COMPILE(newFile, fileObj)
     const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
-    const finalPath = getFileLocation(newPath)
-    const finalScriptedContent = await addScripts(finalFileContent, path.parse(finalPath), finalPath)
-    searchFile.add(finalScriptedContent, finalPath)
-    writeFile(finalPath, finalScriptedContent)
+    const finalPath = LOCATION(newPath)
+    const finalScriptedContent = await SCRIPTS(finalFileContent, path.parse(finalPath), finalPath)
+    SEARCH.add(finalScriptedContent, finalPath)
+    WRITE(finalPath, finalScriptedContent)
   } catch (err) { logError(err, { path: filePath }) }
 }
 

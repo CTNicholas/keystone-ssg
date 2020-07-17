@@ -4,7 +4,7 @@ const runRollup = require('./rollup.js')
 const path = require('path')
 const state = require('../state.js')
 const logError = require('../server/log-error.js')
-const logServer = require('../server/log-Server.js')
+const logServer = require('../server/log-server.js')
 
 /*
  * Add a function to compileTypes to add a new substituion
@@ -97,8 +97,8 @@ function addSlots (content, slotContent) {
   return content
 }
 
-async function addTemplate ({ attrs, slotContent }) {
-  return addImport({ attrs }, 'templates').then(res => {
+async function addTemplate ({ attrs, vars, slotContent }) {
+  return addImport({ attrs, vars }, 'templates').then(res => {
     slotContent.slot = res
     return ''
   })
@@ -139,14 +139,14 @@ async function addStyle ({ attrs }) {
   }
 }
 
-async function addImport ({ attrs }, defaultDir = 'components') {
+async function addImport ({ attrs, vars = {} }, defaultDir = 'components') {
   const filePath = checkPath(attrs, defaultDir)
   if (filePath) {
     try {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
       const newFile = await runRollup(fileContent, fileObj, filePath)
-      newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent, fileObj)
+      newFile.fileContent = await compiler(getVariables({ ...vars, ...attrs }, excludedAttributes), newFile.fileContent, fileObj)
       logServer.bundling(filePath)
       return await newFile.fileContent
     } catch (error) {

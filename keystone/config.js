@@ -12,7 +12,7 @@ try {
     console.warn('No keystone.config.js file found, using defaults')
   }
 } catch (err) {
-  console.warn('Error in keystone.config.js file, using defaults')
+  console.warn('Error in keystone.config.js file, using defaults', err)
 }
 
 module.exports = {
