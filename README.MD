@@ -1,3 +1,4 @@
+
 ![Keystone logo](https://github.com/CTNicholas/keystone-ssg/raw/master/keystone_logo_small.png)
 # Why Keystone?
 Keystone is a static-site generator ideal for quickly building small websites. No setup required, and a collection of handy features are enabled by default.

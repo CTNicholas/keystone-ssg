@@ -1,10 +1,12 @@
 const config = require('../config.js')
 const state = require('../state.js')
 const serverLog = require('./log-server.js')
+const logError = require('./log-error.js')
 const express = require('express')
 const app = express()
 
 const WebSocket = require('ws')
+const logError = require('./log-error.js')
 let wss
 
 module.exports = class Server {
@@ -44,7 +46,7 @@ module.exports = class Server {
           this.refresh()
           resolve()
         })
-      })
+      }).catch(logError)
     }
     return new Promise((resolve, reject) => {
       reject(new Error('No server'))

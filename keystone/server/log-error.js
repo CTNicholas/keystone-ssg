@@ -1,9 +1,11 @@
 const chalk = require('chalk')
+const config = require('../config.js')
 const state = require('../state.js')
 const serverLog = require('./log-server.js')
 
 const errorList = {
-  ENOENT: enoent
+  ENOENT: enoent,
+  EADDRINUSE: eaddrinuse
 }
 
 module.exports = function (error, info) {
@@ -17,6 +19,12 @@ module.exports = function (error, info) {
     }
     endError()
   }
+}
+
+function eaddrinuse (error, { path, name }) {
+  console.log(chalk` {gray Code:} {whiteBright ${error.code}}`)
+  console.log(chalk` {gray Port:} {whiteBright.bold ${config.portWs}}`)
+  console.log(chalk` {gray Info:} {whiteBright Keystone already running, or port ${config.portWs} in use}: {inverse.bold  ${error.path} }`)
 }
 
 function enoent (error, { path, name }) {
