@@ -7,8 +7,7 @@ Keystone is a static-site generator ideal for quickly building small websites. N
 - Auto-refresh development server
 - Use templates and reusable partials/imports, with slots
 - Automatic routing, just upload `/public` and you're ready to go
-- Built-in markdown support
-- Babel & SCSS enabled by default
+- Babel, SCSS, & Markdown support enabled by default
 - JS & CSS minifying and bundling (with Rollup)
 - Dynamic link loading (no page reload)
 - Search index file generator, for easy website searching

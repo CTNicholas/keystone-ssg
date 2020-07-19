@@ -14,7 +14,6 @@ module.exports = function (fileContent, fileObj, filePath) {
     let result = compileMarkdown(fileContent)
     return new Promise((resolve, reject) => {
       resolve({ fileContent: result, fileName: fileObj.name + '.html' })
-      console.log(result)
     }).catch(logError)
   }
 

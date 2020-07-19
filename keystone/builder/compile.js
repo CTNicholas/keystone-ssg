@@ -57,7 +57,7 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
           fileObj: fileObj,
           vars: compileVars,
           fileName: fileName,
-          slotContent
+          slotContent: slotContent
           // promiseObj: asyncResults[`${match}${p1}${p2}`]
         }).then(res => {
           asyncResults[`${match}${p1}${p2}`].content = res === false ? match : res
