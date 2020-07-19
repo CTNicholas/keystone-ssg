@@ -1,5 +1,6 @@
 const config = require('../config.js')
 const wsScript = require('../scripts/dev-script.js')
+const dynLinks = require('../scripts/dynamic-links.js')
 // const fs = require('fs-extra')
 
 const emptyDir = false
@@ -14,13 +15,14 @@ module.exports = `
       small { font-weight: normal; opacity: 0.7; font-size: 0.7em; display: block; }
     </style>
     ${wsScript}
-  </head>
-  <body>
+    </head>
+    <body>
     <h1>
-      Error
-      ${emptyDir ? `<small>${config.build} folder is empty. Place .html files here and restart server.</small>` : ''}
-      <small>Incorrect URL, or check server console for errors.</small>
+    Error
+    ${emptyDir ? `<small>${config.build} folder is empty. Place .html files here and restart server.</small>` : ''}
+    <small>Incorrect URL, or check server console for errors.</small>
     </h1>
+    ${dynLinks}
   </body>
 </html>
 `

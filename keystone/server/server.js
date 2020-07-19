@@ -6,7 +6,6 @@ const express = require('express')
 const app = express()
 
 const WebSocket = require('ws')
-const logError = require('./log-error.js')
 let wss
 
 module.exports = class Server {
