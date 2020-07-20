@@ -4,10 +4,10 @@ const logError = require('../server/log-error.js')
 const fs = require('fs-extra')
 const path = require('path')
 
-const searchItems = []
+let searchItems = []
 
 function add (html, filePath) {
-  if (config.searchFile) {
+  if (config.searchFile && notIndexed(filePath)) {
     searchItems.push({
       path: getUrl(filePath),
       title: getTitle(html),
@@ -24,6 +24,7 @@ function create () {
     } catch (err) {
       logError(err)
     }
+    searchItems = []
   }
 }
 
@@ -31,6 +32,10 @@ module.exports = { add, create }
 
 var Entities = require('html-entities').AllHtmlEntities
 var entities = new Entities()
+
+function notIndexed (filePath) {
+  return !searchItems.some(({ path }) => path === filePath)
+}
 
 function getInnerText (html) {
   html = removeTag(html, 'style')
