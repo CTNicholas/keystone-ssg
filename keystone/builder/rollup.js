@@ -28,7 +28,7 @@ module.exports = function (fileContent, fileObj, filePath) {
   }
 
   const outputOptions = {
-    format: 'umd'
+    format: 'iife'
   }
 
   async function build () {
