@@ -1,6 +1,6 @@
 {
   "name": "keystone-ssg",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Zero config static-site generator. Templates, partials, routing, Babel, SCSS/SASS, Markdown, JS bundling, minifying, dynamic links, auto-refresh dev server",
   "homepage": "https://github.com/CTNicholas/keystone-ssg#readme",
   "main": "keystone/index.js",

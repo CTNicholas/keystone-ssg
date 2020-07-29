@@ -1,5 +1,6 @@
 # Major updates
 ## 1.4
+- Source maps added for CSS & JS
 - Loading bar added for dynamic links
 ## 1.3
 - Added support for markdown files in the build directory

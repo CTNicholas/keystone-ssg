@@ -29,15 +29,15 @@ const compileTypes = {
   var: addVars
 }
 
-module.exports = async function ({ fileContent, fileName }, fileObj) {
-  return compiler({}, fileContent, fileObj, fileName)
+module.exports = async function ({ fileContent, fileName, sourceMap }, fileObj) {
+  return compiler({}, fileContent, fileObj, fileName, sourceMap)
 }
 
 /*
  * Promises don't work well with replace, so we get the substition values,
  * and then make the replacements after
  */
-async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
+async function compiler (compileVars = {}, fileContent, fileObj, fileName, sourceMap = null) {
   const asyncPromises = []
   const asyncResults = []
   const slotContent = { slot: false }
@@ -57,7 +57,8 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName) {
           fileObj: fileObj,
           vars: compileVars,
           fileName: fileName,
-          slotContent: slotContent
+          slotContent: slotContent,
+          sourceMap: sourceMap
           // promiseObj: asyncResults[`${match}${p1}${p2}`]
         }).then(res => {
           asyncResults[`${match}${p1}${p2}`].content = res === false ? match : res

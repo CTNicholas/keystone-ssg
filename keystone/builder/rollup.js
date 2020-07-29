@@ -1,3 +1,4 @@
+const state = require('../state.js')
 const rollup = require('rollup')
 const marked = require('marked')
 const defaultPlugins = require('../config.rollup.js')
@@ -18,17 +19,28 @@ module.exports = function (fileContent, fileObj, filePath) {
   }
 
   let result
+  let devInputOptions = {}
+  let devOutputOptions = {}
 
+  if (state.mode === 'dev') {
+    devInputOptions = {}
+    devOutputOptions = {
+      sourcemap: 'inline'
+    }
+  }
+  
   const inputOptions = {
     input: filePath,
     onwarn: error => logError(error, filePath),
+    ...devInputOptions,
     plugins: [
-      ...defaultPlugins(res => { result = res })
+      ...defaultPlugins(res => { result = res }, state)
     ]
   }
 
   const outputOptions = {
-    format: 'iife'
+    format: 'iife',
+    ...devOutputOptions
   }
 
   async function build () {
@@ -44,14 +56,17 @@ module.exports = function (fileContent, fileObj, filePath) {
   return build().then(bundle => {
     let finalCode
     let finalName
+    let finalMap
     if (result.code) {
       finalCode = result.code
       finalName = fileObj.name + result.fileExt
+      finalMap = result.map || null
     } else {
-      finalCode = bundle.output[0].code
       finalName = fileObj.base
+      finalMap = bundle.output[0].map || null
+      finalCode = `${bundle.output[0].code}${finalMap ? `\n//# sourceMappingURL=${finalMap.toUrl()}` : ''}`
     }
-    return { fileContent: finalCode, fileName: finalName }
+    return { fileContent: finalCode, fileName: finalName, sourceMap: finalMap }
   }).catch(logError)
 }
 
