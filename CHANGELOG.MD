@@ -1,4 +1,6 @@
 # Major updates
+## 1.4
+- Loading bar added for dynamic links
 ## 1.3
 - Added support for markdown files in the build directory
 - Improved installer to allow easy updating of Keystone

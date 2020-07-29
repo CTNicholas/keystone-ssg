@@ -97,7 +97,7 @@ function addSlots (content, slotContent) {
   return content
 }
 
-async function addTemplate ({ attrs, vars, slotContent }) {
+async function addTemplate ({ attrs, vars, slotContent, fileName }) {
   return addImport({ attrs, vars }, 'templates').then(res => {
     slotContent.slot = res
     return ''
@@ -139,11 +139,17 @@ async function addStyle ({ attrs }) {
   }
 }
 
-async function addImport ({ attrs, vars = {} }, defaultDir = 'components') {
+async function addImport ({ attrs, vars = {}, fileName }, defaultDir = 'components') {
   const filePath = checkPath(attrs, defaultDir)
   if (filePath) {
     try {
       const fileObj = path.parse(filePath)
+
+      // TEMPORARY
+      if (false && defaultDir === 'templates') {
+        state.addTemplate({ fileName, filePath })
+      }
+
       const fileContent = fs.readFileSync(filePath, 'utf-8')
       const newFile = await runRollup(fileContent, fileObj, filePath)
       newFile.fileContent = await compiler(getVariables({ ...vars, ...attrs }, excludedAttributes), newFile.fileContent, fileObj)
