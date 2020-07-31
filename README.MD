@@ -89,17 +89,26 @@ Static assets are placed here, ie fonts, images, icons. Everything here will be 
 - All HTML tags are stripped from the page, and only the text is kept and stored.
 - This file can be fetched and queried be a website search function, to easily find which page contains which content.
 - Disable the search bar helper in keystone.config.js.
+## Miscellaneous
+- The `public` folder is ignored by Git, remove the `public` line from `.gitignore` should you wish to use to commit it to Git.
 
 # API
 ## Tags
 Tag | Description | Attributes
 -|-|-
 `<_template>` | Imports the current file into a `<_slot>` within the template file | [file name], [variable name], src
-`<_slot>` | Used within a template file as an entry point for the imported file | -
+`<_slot>` | Used within a template file as an entry point for the imported file | *None*
 `<_var>` | Used within a template file to be replaced by a variable taken from `<_template>` | [variable name], default
 `<_import>` | Imports a component | [file name], src
-`<_script>` | Creates a script tag linking to the bundled script | [file name], src
-`<_style>` | Creates a link tag linking to the bundled css file | [file name], src
+`<_script>` | Creates a `<script>` tag linking to the bundled script | [file name], src
+`<_style>` | Creates a `<link>` tag linking to the bundled css file | [file name], src
+
+## NPM Commands
+Command | Description | Output differences
+-|-|-
+`npm run dev` | Builds the website for development, then starts the Keystone development server. | <ul><li>Inline source maps are generated.</li><li>Development server script is injected.</li></ul>
+`npm run build` | Builds the website for production. | <ul><li>Bundle is compacted & minified.</li></ul>
+
 ## Config file
 The config file is `keystone.config.js`
 Option | Description | Default

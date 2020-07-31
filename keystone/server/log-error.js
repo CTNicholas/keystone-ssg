@@ -1,24 +1,41 @@
 const chalk = require('chalk')
 const config = require('../config.js')
 const state = require('../state.js')
+// const errorServer = require('./server-error.js')
 const serverLog = require('./log-server.js')
 
 const errorList = {
   ENOENT: enoent,
-  EADDRINUSE: eaddrinuse
+  EADDRINUSE: eaddrinuse,
+  PLUGIN_ERROR: plugin_error
 }
 
 module.exports = function (error, info) {
-  if (!ignoreError(error)) {
-    state.error = true
+  if (!ignoreError(error) && !state.error) {
+    console.log(state.suppressErrors)
+    //if (state.suppressErrors) {
+      state.error = true
+    //}
     startError(error, info)
-    if (errorList[error.code]) {
+    if (Object.keys(errorList).includes(error.code)) {
       errorList[error.code](error, info)
     } else {
       defaultError(error, info)
     }
     endError()
+    // errorServer()
+  } else if (!ignoreError(error)) {
+    console.log('Error suppressed')
   }
+}
+
+function plugin_error (error, info = {}) {
+  console.log(chalk` {gray Code:} {whiteBright ${error.code}}`)
+  console.log(chalk` {gray File:} {whiteBright.bold ${error.loc.file}}`)
+  console.log(chalk` {gray Info:} {whiteBright Unexpected token or syntax error at}: {inverse.bold  line ${error.loc.line} column ${error.loc.column} }`)
+  console.log()
+  console.log(error.frame)
+  console.log()
 }
 
 function eaddrinuse (error, { path, name }) {
@@ -39,13 +56,17 @@ function defaultError (error) {
 
 function startError (error) {
   serverLog.divider()
-  console.log(error)
-  console.log()
+  if (state.fullErrors) {
+    console.log(error)
+    console.log()
+  }
   console.log(chalk.bgRed.white.bold(' ERROR '))
 }
 
 function endError () {
-  console.log(chalk` {gray (stack trace above)}`)
+  if (state.fullErrors) {
+    console.log(chalk` {gray (stack trace above)}`)
+  }
   serverLog.divider()
 }
 

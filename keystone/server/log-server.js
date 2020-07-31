@@ -22,14 +22,18 @@ function startBuild () {
 }
 
 function bundling (file) {
-  bundleCount++
-  const str = '' + bundleCount + '.'
-  console.log(chalk` {grey ${str.length < 3 ? ` ${str}` : str}} {grey ${file}}`)
+  if (state.error === false) {
+    bundleCount++
+    const str = '' + bundleCount + '.'
+    console.log(chalk` {grey ${str.length < 3 ? ` ${str}` : str}} {grey ${file}}`)
+  }
 }
 
 function endBuild () {
-  console.log()
-  console.log(chalk`{white.bold  Bundle generated}`)
+  if (state.error === false) {
+    console.log()
+    console.log(chalk`{white.bold  Bundle generated}`)
+  }
 }
 
 function startKeystone () {
@@ -50,10 +54,13 @@ function fileChange (changes) {
 }
 
 function serverRunning (port) {
-  // setTimeout(() => {
-  divider()
-  console.log(chalk`{green  Dev server running at {bold http://localhost:${port}}}\n`)
-  // }, 50)
+  if (state.error === false) {
+    divider()
+    console.log(chalk`{green  Dev server running at {bold http://localhost:${port}}}\n`)
+  } else {
+    //console.log(chalk`{redBright.bold  Dev server awaiting error fix}\n`)
+  }
+  
 }
 
 function divider () {

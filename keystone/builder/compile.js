@@ -30,6 +30,9 @@ const compileTypes = {
 }
 
 module.exports = async function ({ fileContent, fileName, sourceMap }, fileObj) {
+  if (state.error === true) {
+    return 'error'
+  }
   return compiler({}, fileContent, fileObj, fileName, sourceMap)
 }
 

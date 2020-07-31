@@ -50,6 +50,7 @@ module.exports = function (fileContent, fileObj, filePath) {
       return final
     } catch (err) {
       if (err) { logError(err) }
+      result = { code: 'error', fileExt: 'error' }
     }
   }
 

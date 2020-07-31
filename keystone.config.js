@@ -11,5 +11,7 @@ module.exports = {
   ],
   port: 8080,
   portWs: 8081,
-  devServerIp: 'localhost'
+  devServerIp: 'localhost',
+  fullErrors: false,
+  suppressErrors: true
 }

@@ -16,7 +16,8 @@ runBuild().then(() => {
     logServer.endBuildMode()
   }
   if (state.mode === 'dev') {
-    require('./dev.js')
+    const runDev = require('./dev.js')
+    runDev()
   }
 })
 
