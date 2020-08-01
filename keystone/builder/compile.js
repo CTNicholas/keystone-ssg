@@ -158,7 +158,7 @@ async function addImport ({ attrs, vars = {}, fileName }, defaultDir = 'componen
       const newFile = await runRollup(fileContent, fileObj, filePath)
       newFile.fileContent = await compiler(getVariables({ ...vars, ...attrs }, excludedAttributes), newFile.fileContent, fileObj)
       logServer.bundling(filePath)
-      return await newFile.fileContent
+      return newFile.fileContent
     } catch (error) {
       logError(error, { path: filePath })
       return false

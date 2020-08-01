@@ -69,7 +69,7 @@ async function copyAssets () {
 }
 
 function buildSplashPage () {
-  const emptyPages = require('./splash.js')
+  const emptyPages = require('./server/splash.js')
   fs.appendFileSync(path.join(config.build, 'index.html'), emptyPages)
   console.log('No index.html, default splash page built')
 }

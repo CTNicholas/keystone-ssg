@@ -1,4 +1,3 @@
-
 ![Keystone logo](https://github.com/CTNicholas/keystone-ssg/raw/master/keystone_logo_small.png)
 # Why Keystone?
 Keystone is a static-site generator ideal for quickly building small websites. No setup required, and a collection of handy features are enabled by default.
@@ -83,6 +82,7 @@ Static assets are placed here, ie fonts, images, icons. Everything here will be 
 ## Dynamic loading
 - Dynamic loading fetches the local website link and replaces the content of the current page with the new page, without reloading and switching pages.
 - While dynamic loading is enabled, page state (eg input values, scroll position) is not saved when using the back button.
+- When a link is clicked, the `.keystone-page-loading` class is set to `display: block`. If the class is set to `display: none` in the CSS, this can be used to create a loading indicator.
 - Disable dynamic loading in keystone.config.js.
 ## Search index generator
 - The search index generator generates a file, `search.json`, in the root directory This is a JSON array containing an object for each page, listing the text content, title, and path of the page.

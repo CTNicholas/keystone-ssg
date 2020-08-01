@@ -2,7 +2,7 @@
 ## 1.4
 - Source maps added for CSS & JS
 - Loading bar added for dynamic links
-- Improved user experience & error handling
+- Greatly improved user experience & error handling
 
 ## 1.3
 - Added support for markdown files in the build directory
