@@ -9,7 +9,8 @@ const errorList = {
   ENOENT: enoent,
   EADDRINUSE: eaddrinuse,
   PLUGIN_ERROR: plugin_error,
-  SCSS_ERROR: scss_error
+  SCSS_ERROR: scss_error,
+  UNRESOLVED_IMPORT: unresolved_import
 }
 
 module.exports = function (error, info) {
@@ -27,10 +28,18 @@ module.exports = function (error, info) {
   }
 }
 
+function unresolved_import (error) {
+  const info = error.toString().split('\n')[0].substr(7)
+  const [name] = info.split(' ').slice(-1)
+  console.log(chalk` {gray Code:} {whiteBright ${error.code}}`)
+  console.log(chalk` {gray File:} {redBright.bold ${name}}`)
+  console.log(chalk` {gray Info:} {whiteBright ${info} }`)
+}
+
 function scss_error (error, { path, name }) {
   console.log(chalk` {gray Code:} {whiteBright ${error.code}}`)
   console.log(chalk` {gray File:} {redBright.bold ${path}}`)
-  console.log(chalk` {gray Info:} {white See above, SCSS/CSS error in }: {inverse.bold  ${name} }`)
+  console.log(chalk` {gray Info:} {whiteBright See above, SCSS/CSS error in }: {inverse.bold  ${name} }`)
   console.log()
   console.log = null // Only way to prevent async duplicated automatic scss error logging
 }

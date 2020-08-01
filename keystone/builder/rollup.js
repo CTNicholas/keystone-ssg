@@ -73,7 +73,11 @@ module.exports = function (fileContent, fileObj, filePath) {
       // Other type of file
       finalName = fileObj.base
       finalMap = bundle.output[0].map || null
-      finalCode = `${bundle.output[0].code}${finalMap ? `\n//# sourceMappingURL=${finalMap.toUrl()}` : ''}`
+      if (finalMap) {
+        finalCode = `${bundle.output[0].code}${finalMap ? `\n//# sourceMappingURL=${finalMap.toUrl()}` : ''}`
+      } else {
+        finalCode = bundle.output[0].code
+      }
     }
     return { fileContent: finalCode, fileName: finalName, sourceMap: finalMap }
   }).catch(logError)

@@ -1,21 +1,25 @@
 const config = require('../config.js')
 
 module.exports = `
-  <!-- STATIS: Dev server script, run without --dev variable for production -->\n 
+  <!-- KEYSTONE: Dev server script, use 'npm run build' for production -->\n 
   <script>
   try { 
-    if (!window.STATIS_DEV_SCRIPT && window.location.port === '${config.port}') {
-      window.STATIS_DEV_SCRIPT = true
+    if (!window.KEYSTONE_DEV_SCRIPT && window.location.port === '${config.port}') {
+      window.KEYSTONE_DEV_SCRIPT = true
       ;(function () {
+        const blueText = 'color: #4086DB; font-weight: bold;'
+        const greenText = 'color: #019952;'
         let alreadyClosed = false
         startListen()
         function startListen () {
           const wsUri = "ws://${config.devServerIp}:${config.portWs}/"
           const ws = new WebSocket(wsUri)
           let serverOpen = false
+          let justOpened = true
           ws.onopen = function (message) {
-            console.log('STATIS: Development server started')
+            console.log('%c[KEYSTONE] %cDevelopment server started', blueText, greenText)
             serverOpen = true
+            justOpened = false
             if (alreadyClosed) {
               location.reload()
             }
@@ -27,11 +31,13 @@ module.exports = `
             }
           }
           ws.onerror = function (message) {
-            console.log('STATIS: Error:', message)
+            if (!justOpened) {
+              console.error('%c[KEYSTONE]', blueText, 'Development server closed')
+            }
           }
           ws.onclose = function (message) {
-            if (serverOpen === true) { 
-              console.error('STATIS: Development server closed')
+            if (serverOpen === true) {
+              
               alreadyClosed = true
             }
             serverOpen = false
@@ -40,6 +46,6 @@ module.exports = `
         }
       })()
     }
-  } catch (err) { }
+  } catch (err) { console.log(err) }
   </script>
 `
