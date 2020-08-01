@@ -23,28 +23,20 @@ module.exports = function (filePath) {
       return styleLocation(filePath, fileObj)
     default:
       return doHtml(filePath, fileObj, dirName)
-      // return path.join(config.served, 'err', fileObj.base)
   }
 }
 
 function doHtml (filePath, fileObj, dirName) {
-  //if (Object.keys(dirFuncs[fileObj.ext]).includes(dirName)) {
-    return dirFuncs['.html']['pages'](filePath, fileObj) // || false
- // } else {
- //   return false
-  //}
+  return dirFuncs['.html']['pages'](filePath, fileObj)
 }
 
 function pagesLocation (filePath, fileObj) {
-  //if (fileObj.ext === '.html' || fileObj.ext === '.htm') {
-    const fileSplit = fileObj.dir.split(path.sep).length > 1 ? fileObj.dir.split(path.sep).slice(1).join(path.sep) : ''
-    if (fileObj.name === 'index') {
-      return path.join(config.served, fileSplit, 'index.html')
-    } else {
-      return path.join(config.served, fileSplit, fileObj.name, 'index.html')
-    }
-  //}
-  //return 'err/' + fileObj.base
+  const fileSplit = fileObj.dir.split(path.sep).length > 1 ? fileObj.dir.split(path.sep).slice(1).join(path.sep) : ''
+  if (fileObj.name === 'index') {
+    return path.join(config.served, fileSplit, 'index.html')
+  } else {
+    return path.join(config.served, fileSplit, fileObj.name, 'index.html')
+  }
 }
 
 function styleLocation (filePath, fileObj) {

@@ -13,10 +13,6 @@ module.exports = function (result, state) {
   let scssOtherOptions = {}
 
   if (state.mode === 'dev') {
-    babelOtherOptions = {
-      minified: false,
-      compact: false
-    }
     scssOtherOptions = {
       sourceMap: true,
       sourceMapContents: true,
@@ -30,7 +26,11 @@ module.exports = function (result, state) {
     ]
     babelOtherOptions = {
       minified: true,
-      compact: true
+      compact: true,
+      comments: false
+    }
+    scssOtherOptions = {
+      outputStyle: 'compressed'
     }
   }
 
@@ -43,9 +43,8 @@ module.exports = function (result, state) {
       presets: ['@babel/preset-env']
     }),
     scss({
-      outputStyle: 'compressed',
       ...scssOtherOptions,
-      output (styles) {
+      output (styles, v1, v2, v3) {
         result({ code: styles, fileExt: '.css' })
       }
     }),

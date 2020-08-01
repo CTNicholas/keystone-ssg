@@ -14,6 +14,7 @@ module.exports = class Server {
     this.portWs = portWs
     this.server = undefined
     this.userCount = 0
+    this.catchPort()
     this.start().then(() => {
       if (config.watch) {
         this.startWss()
@@ -54,7 +55,6 @@ module.exports = class Server {
 
   error () {
     console.log('Server error')
-    // TODO
   }
 
   startWss () {
@@ -66,14 +66,12 @@ module.exports = class Server {
       })
 
       this.updateUsers()
-
-      // console.log('User connected', ++this.userCount)
+      
       ws.on('message', message => {
         console.log('Message:', message)
       })
 
       ws.on('close', () => {
-        // console.log('Disconnected', --this.userCount)
       })
     })
   }
@@ -81,7 +79,6 @@ module.exports = class Server {
   updateUsers () {
     wss.clients.forEach((ws) => {
       if (ws.isAlive === false) {
-        // console.log('Terminate connection', --this.userCount)
         return ws.terminate()
       }
       ws.isAlive = false
@@ -109,5 +106,14 @@ module.exports = class Server {
         }
       })
     }
+  }
+
+  catchPort () {
+    process.on('uncaughtException', err => {
+      if (err.code === 'EADDRINUSE') {
+        logError(err, { port: err.port })
+        process.exit(0)
+      }
+    })
   }
 }

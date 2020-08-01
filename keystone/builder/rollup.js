@@ -59,10 +59,18 @@ module.exports = function (fileContent, fileObj, filePath) {
     let finalName
     let finalMap
     if (result.code) {
+      // SCSS/CSS file
       finalCode = result.code
       finalName = fileObj.name + result.fileExt
       finalMap = result.map || null
+    } else if (isScssError(result.code, fileObj.ext)) {
+      // SCSS/CSS error
+      logError({ code: 'SCSS_ERROR' }, { path: filePath, name: fileObj.base })
+      finalName = fileObj.base
+      finalMap = bundle.output[0].map || null
+      finalCode = `${bundle.output[0].code}${finalMap ? `\n//# sourceMappingURL=${finalMap.toUrl()}` : ''}`
     } else {
+      // Other type of file
       finalName = fileObj.base
       finalMap = bundle.output[0].map || null
       finalCode = `${bundle.output[0].code}${finalMap ? `\n//# sourceMappingURL=${finalMap.toUrl()}` : ''}`
@@ -86,7 +94,11 @@ function compileMarkdown (input) {
       tag = tag.replace(new RegExp(before, 'igm'), after)
     }
     return tag
-    // return tag.replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"')
   })
   return output
+}
+
+function isScssError (css, ext) {
+  const cssExts = ['.css', '.scss', '.sass']
+  return cssExts.includes(ext) && css === undefined
 }
