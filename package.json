@@ -1,14 +1,14 @@
 {
   "name": "keystone-ssg",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Zero config static-site generator. Templates, partials, routing, Babel, SCSS/SASS, Markdown, JS bundling, minifying, dynamic links, auto-refresh dev server",
   "homepage": "https://github.com/CTNicholas/keystone-ssg#readme",
   "main": "keystone/index.js",
   "scripts": {
     "postinstall": "node ./keystone/bin/install.js",
-    "dev": "node ./keystone/index.js --dev",
-    "build": "node ./keystone/index.js"
+    "dev": "node ./keystone/scripts/minify.js"
   },
+  "pre-commit": "dev",
   "author": "CTNicholas",
   "license": "ISC",
   "repository": "github:CTNicholas/keystone-ssg",
@@ -35,7 +35,9 @@
     "rollup-plugin-terser": "^6.1.0",
     "ws": "^7.3.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "pre-commit": "^1.2.2"
+  },
   "keywords": [
     "static site generator",
     "static",

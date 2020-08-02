@@ -1,8 +1,9 @@
 const config = require('../config')
 const state = require('../state.js')
+const fs = require('fs-extra')
 
-const devScript = require('../scripts/dev-script.js')
-const dynamicLinks = require('../scripts/dynamic-links.js')
+const devScript = loadScript('../scripts/compiled/script-dev.min.js')
+const dynamicLinks = loadScript('../scripts/compiled/script-links.min.js')
 
 const scripts = [
   adddynamicLinks,
@@ -18,14 +19,19 @@ module.exports = async function (fileContent, fileObj, filePath) {
 
 function adddynamicLinks (fileContent, fileObj) {
   if (config.dynamicLinks && isHtml(fileObj)) {
-    return addToTag(fileContent, dynamicLinks, 'body')
+    const finalScript = `<script>${dynamicLinks()}</script>`
+    return addToTag(fileContent, finalScript, 'body')
   }
   return fileContent
 }
 
 function addDevScript (fileContent, fileObj) {
   if (state.mode === 'dev' && isHtml(fileObj)) {
-    return addToTag(fileContent, devScript, 'head')
+    const finalScript = `
+      <!-- KEYSTONE: Dev server script, use 'npm run build' for production -->\n 
+      <script>${devScript()}</script>
+    `
+    return addToTag(fileContent, finalScript, 'head')
   }
   return fileContent
 }
@@ -46,4 +52,14 @@ function addToTag (fileContent, newContent, tag) {
 
 function isHtml (fileObj) {
   return fileObj.ext.includes('.htm')
+}
+
+function loadScript (script) {
+  let cache = null
+  return () => { 
+    if (cache === null) {
+      cache = fs.readFileSync(require.resolve(script), 'utf-8')
+    }
+    return cache
+  }
 }

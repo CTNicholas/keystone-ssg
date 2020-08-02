@@ -4,8 +4,8 @@
   is added to the top of the page. In the example project, this is inside basic.html
 */
 
-$loading-bar-color: lightgray;
-$loading-bar-thickness: 3px;
+$loading-bar-color: gray;
+$loading-bar-thickness: 2px;
 $loading-bar-speed: 30s;
 
 .keystone-page-loading {
@@ -14,6 +14,7 @@ $loading-bar-speed: 30s;
   top: 0;
   left: 0;
   right: 0;
+  z-index: 10000;
   height: $loading-bar-thickness;
   background: $loading-bar-color;
   animation: keystone-loading $loading-bar-speed cubic-bezier(.04,.76,.05,1.04);

@@ -1,8 +1,6 @@
 const config = require('../config.js')
 
 module.exports = `
-  <!-- KEYSTONE: Dev server script, use 'npm run build' for production -->\n 
-  <script>
   try { 
     if (!window.KEYSTONE_DEV_SCRIPT && window.location.port === '${config.port}') {
       window.KEYSTONE_DEV_SCRIPT = true
@@ -47,5 +45,4 @@ module.exports = `
       })()
     }
   } catch (err) { console.log(err) }
-  </script>
 `
