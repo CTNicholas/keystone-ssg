@@ -39,7 +39,7 @@ function unresolved_import (error) {
 function scss_error (error, { path, name }) {
   console.log(chalk` {gray Code:} {whiteBright ${error.code}}`)
   console.log(chalk` {gray File:} {redBright.bold ${path}}`)
-  console.log(chalk` {gray Info:} {whiteBright See above, SCSS/CSS error in }: {inverse.bold  ${name} }`)
+  console.log(chalk` {gray Info:} {whiteBright See above, SCSS/CSS error in}: {inverse.bold  ${name} (or its @imports)}`)
   console.log()
   console.log = null // Only way to prevent async duplicated automatic scss error logging
 }

@@ -13,7 +13,9 @@ module.exports = `
     <title>Dev server error</title>
     <style>
       body { margin: 1rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
-      small { font-weight: normal; opacity: 0.7; font-size: 0.7em; display: block; }
+      small, p { font-weight: normal; opacity: .7; font-size: .7em; display: block; }
+      p { margin-top: .5em; opacity: 1; }
+      a { color: #4086DB; font-weight: 600; }
     </style>
     <script>${devScript()}</script>
     </head>
@@ -22,6 +24,7 @@ module.exports = `
     Error
     ${emptyDir ? `<small>${config.build} folder is empty. Place .html files here and restart server.</small>` : ''}
     <small>Incorrect URL, or check server console for errors.</small>
+    <p><a href="/">index.html</a></p>
     </h1>
     <script>${dynamicLinks()}</script>
   </body>

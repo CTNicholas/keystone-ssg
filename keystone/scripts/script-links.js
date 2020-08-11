@@ -25,6 +25,9 @@ module.exports = `
   }
 
   function linkAllowed (target) {
+    if (target.hash) {
+      return false
+    }
     const sameHost = location.host === target.host
     const notSamePage =
       location.host + location.pathname + location.search !==
