@@ -38,8 +38,11 @@ module.exports = function () {
       const buildPromises = []
       buildPromises.push(copyAssets())
       for (const filePath of files) {
-        logServer.bundling(filePath)
-        buildPromises.push(buildFile(filePath))
+        const file = new File(filePath)
+        if (fileChanged(file)) {
+          logServer.bundling(file.old.filePath)
+          buildPromises.push(buildFile(file))
+        }
       }
 
       await Promise.all(buildPromises)
@@ -50,19 +53,33 @@ module.exports = function () {
   }).catch(logError)
 }
 
-async function buildFile (filePath) {
+async function buildFile (file) {
   try {
-    state.filesBuilt.push(path.normalize(filePath))
-    const fileObj = path.parse(filePath)
-    const fileContent = fs.readFileSync(filePath, 'utf-8')
-    const newFile = await ROLLUP(fileContent, fileObj, filePath)
-    const finalFileContent = await COMPILE(newFile, fileObj)
-    const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
-    const finalPath = LOCATION(newPath)
-    const finalScriptedContent = await SCRIPTS(finalFileContent, path.parse(finalPath), finalPath)
-    SEARCH.add(finalScriptedContent, finalPath)
-    WRITE(finalPath, finalScriptedContent)
-  } catch (err) { logError(err, { path: filePath }) }
+    state.filesBuilt.push(file.old.filePath)
+    // const fileObj = path.parse(filePath)
+    // const fileContent = fs.readFileSync(filePath, 'utf-8')
+    // const newFile = await ROLLUP(fileContent, fileObj, filePath)
+    await ROLLUP(file)
+    //const finalFileContent = await COMPILE(newFile, fileObj)
+    await COMPILE(file)
+    /*
+    if (file.new.filePath === null) {
+      file.newFilePath(path.normalize(path.join(fileObj.dir, newFile.fileName)))
+    }
+    */
+    // const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
+    // const finalPath = LOCATION(newPath)
+    await LOCATION(file)
+    // const finalScriptedContent = await SCRIPTS(finalFileContent, path.parse(finalPath), finalPath)
+    await SCRIPTS(file)
+    SEARCH.add(file)
+    WRITE(file)
+    console.log(file.old.filePath, file.contains)
+  } catch (err) { logError(err, { path: file.old.filePath }) }
+}
+
+function fileChanged () {
+  return true
 }
 
 async function copyAssets () {

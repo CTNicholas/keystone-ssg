@@ -29,22 +29,28 @@ const compileTypes = {
   var: addVars
 }
 
-module.exports = async function ({ fileContent, fileName, sourceMap }, fileObj) {
+module.exports = async function (file) {
+  const mainFile = file
+  const { fileContent, fileName, sourceMap } = file.new
+  const { fileObj } = file.old
   if (state.error === true) {
     return 'error'
   }
-  return compiler({}, fileContent, fileObj, fileName, sourceMap)
+  return compiler({ fileContent, fileObj, fileName, sourceMap, file, mainFile })
 }
 
 /*
  * Promises don't work well with replace, so we get the substition values,
  * and then make the replacements after
  */
-async function compiler (compileVars = {}, fileContent, fileObj, fileName, sourceMap = null) {
+async function compiler ({ compileVars = {}, fileContent, fileObj, fileName, sourceMap = null, file = null, mainFile }) {
   const asyncPromises = []
   const asyncResults = []
   const slotContent = { slot: false }
-
+  if (mainFile) {
+    mainFile.add(fileObj)
+  }
+  
   // REGEX: /<_(\w+)\s*([\s\S]*?)\s*\/?>/igm
   fileContent.replace(varRegex, (match, p1, p2) => {
     asyncResults[`${match}${p1}${p2}`] = {
@@ -61,7 +67,8 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName, sourc
           vars: compileVars,
           fileName: fileName,
           slotContent: slotContent,
-          sourceMap: sourceMap
+          sourceMap: sourceMap,
+          mainFile: mainFile
           // promiseObj: asyncResults[`${match}${p1}${p2}`]
         }).then(res => {
           asyncResults[`${match}${p1}${p2}`].content = res === false ? match : res
@@ -84,8 +91,14 @@ async function compiler (compileVars = {}, fileContent, fileObj, fileName, sourc
     let newFileContent = fileContent.replace(varRegex, (match, p1, p2) => {
       return asyncResults[`${match}${p1}${p2}`].content
     })
-    newFileContent = addSlots(newFileContent, slotContent.slot)
-    return removeTrailingTags(newFileContent)
+    newFileContent = removeTrailingTags(addSlots(newFileContent, slotContent.slot))
+    // mainFile = {}
+    if (file) {
+      file.new.fileContent = newFileContent
+      return true
+    } else {
+      return newFileContent
+    }
   })
 }
 
@@ -101,8 +114,8 @@ function addSlots (content, slotContent) {
   return content
 }
 
-async function addTemplate ({ attrs, vars, slotContent, fileName }) {
-  return addImport({ attrs, vars }, 'templates').then(res => {
+async function addTemplate ({ attrs, vars, slotContent, fileName, mainFile }) {
+  return addImport({ attrs, vars, mainFile }, 'templates').then(res => {
     slotContent.slot = res
     return ''
   })
@@ -131,8 +144,8 @@ async function addStyle ({ attrs }) {
     if (!alreadyCompiled(filePath)) {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
-      const newFile = await runRollup(fileContent, fileObj, filePath)
-      newFile.fileContent = await compiler(getVariables(attrs, excludedAttributes), newFile.fileContent)
+      const newFile = await runRollup({ old: { fileContent, fileObj, filePath }})
+      newFile.fileContent = await compiler({ compileVars: getVariables(attrs, excludedAttributes), fileContent: newFile.fileContent })
       fs.ensureDirSync(path.join(config.served, 'css'))
       fs.writeFileSync(publicPath, newFile.fileContent)
       logServer.bundling(filePath)
@@ -143,7 +156,7 @@ async function addStyle ({ attrs }) {
   }
 }
 
-async function addImport ({ attrs, vars = {}, fileName }, defaultDir = 'components') {
+async function addImport ({ attrs, vars = {}, fileName, mainFile }, defaultDir = 'components') {
   const filePath = checkPath(attrs, defaultDir)
   if (filePath) {
     try {
@@ -155,8 +168,8 @@ async function addImport ({ attrs, vars = {}, fileName }, defaultDir = 'componen
       }
 
       const fileContent = fs.readFileSync(filePath, 'utf-8')
-      const newFile = await runRollup(fileContent, fileObj, filePath)
-      newFile.fileContent = await compiler(getVariables({ ...vars, ...attrs }, excludedAttributes), newFile.fileContent, fileObj)
+      const newFile = await runRollup({ old: { fileContent, fileObj, filePath }})
+      newFile.fileContent = await compiler({ compileVars: getVariables({ ...vars, ...attrs }, excludedAttributes), fileContent: newFile.fileContent, fileObj, mainFile })
       logServer.bundling(filePath)
       return newFile.fileContent
     } catch (error) {

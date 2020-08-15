@@ -4,6 +4,7 @@ module.exports = {
   filesBuilt: [],
   error: false,
 
+  fileStore: []
   /*
   templates: {},
   addTemplate ({ fileName, filePath }) {

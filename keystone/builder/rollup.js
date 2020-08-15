@@ -1,20 +1,36 @@
 const state = require('../state.js')
 const rollup = require('rollup')
 const marked = require('marked')
+const path = require('path')
 const defaultPlugins = require('../config.rollup.js')
 const logError = require('../server/log-error.js')
 
-module.exports = function (fileContent, fileObj, filePath) {
+module.exports = function (file) {
+  const { fileContent, fileObj, filePath } = file.old
   if (fileObj && (fileObj.ext === '.html' || fileObj.ext === '.htm')) {
     return new Promise((resolve, reject) => {
-      resolve({ fileContent: fileContent, fileName: fileObj.base })
+      if (file.new) {
+        file.new.fileContent = fileContent
+        file.new.fileName = fileObj.base
+        file.newFilePath(path.normalize(path.join(fileObj.dir, fileObj.base)))
+        resolve(true)
+      } else {
+        resolve({ fileContent: fileContent, fileName: fileObj.base })
+      }
     }).catch(logError)
   }
 
   if (fileObj && fileObj.ext === '.md') {
     let result = compileMarkdown(fileContent)
     return new Promise((resolve, reject) => {
-      resolve({ fileContent: result, fileName: fileObj.name + '.html' })
+      if (file.new) {
+        file.new.fileContent = result
+        file.new.fileName = fileObj.name + '.html'
+        file.newFilePath(path.normalize(path.join(fileObj.dir, file.new.fileName)))
+        resolve(true)
+      } else {
+        resolve({ fileContent: result, fileName: fileObj.name + '.html' })
+      }
     }).catch(logError)
   }
 
@@ -79,7 +95,15 @@ module.exports = function (fileContent, fileObj, filePath) {
         finalCode = bundle.output[0].code
       }
     }
-    return { fileContent: finalCode, fileName: finalName, sourceMap: finalMap }
+    if (file.new) {
+      file.new.fileContent = finalCode
+      file.new.fileName = finalName
+      file.newFilePath(path.normalize(path.join(fileObj.dir, finalName)))
+      file.new.sourceMap = finalMap
+      return true
+    } else {
+      return { fileContent: finalCode, fileName: finalName, sourceMap: finalMap }
+    }
   }).catch(logError)
 }
 

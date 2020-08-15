@@ -10,11 +10,13 @@ const scripts = [
   addDevScript
 ]
 
-module.exports = async function (fileContent, fileObj, filePath) {
+module.exports = async function (file) {
+  let { fileContent, fileObj, filePath } = file.new
   for (const script of scripts) {
     fileContent = script(fileContent, fileObj)
   }
-  return fileContent
+  file.new.fileContent = fileContent
+  return true
 }
 
 function adddynamicLinks (fileContent, fileObj) {

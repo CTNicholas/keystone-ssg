@@ -6,12 +6,13 @@ const path = require('path')
 
 let searchItems = []
 
-function add (html, filePath) {
+function add (file) {
+  const { fileContent, filePath } = file.new
   if (config.searchFile && notIndexed(filePath)) {
     searchItems.push({
       path: getUrl(filePath),
-      title: getTitle(html),
-      content: getInnerText(html)
+      title: getTitle(fileContent),
+      content: getInnerText(fileContent)
     })
   }
 }

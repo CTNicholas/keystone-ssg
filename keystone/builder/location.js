@@ -13,36 +13,40 @@ const dirFuncs = {
   }
 }
 
-module.exports = function (filePath) {
-  const fileObj = path.parse(filePath)
+module.exports = function (file) {
+  const { fileObj, filePath } = file.new
   const dirName = fileObj.dir.split(path.sep)[0]
   switch (fileObj.ext) {
     case '.js':
-      return scriptLocation(filePath, fileObj)
+      return scriptLocation(filePath, fileObj, file)
     case '.css':
-      return styleLocation(filePath, fileObj)
+      return styleLocation(filePath, fileObj, file)
     default:
-      return doHtml(filePath, fileObj, dirName)
+      return doHtml(filePath, fileObj, dirName, file)
   }
 }
 
-function doHtml (filePath, fileObj, dirName) {
-  return dirFuncs['.html']['pages'](filePath, fileObj)
+function doHtml (filePath, fileObj, dirName, file) {
+  return dirFuncs['.html']['pages'](filePath, fileObj, file)
 }
 
-function pagesLocation (filePath, fileObj) {
+function pagesLocation (filePath, fileObj, file) {
   const fileSplit = fileObj.dir.split(path.sep).length > 1 ? fileObj.dir.split(path.sep).slice(1).join(path.sep) : ''
   if (fileObj.name === 'index') {
-    return path.join(config.served, fileSplit, 'index.html')
+    file.newFilePath(path.join(config.served, fileSplit, 'index.html'))
+    return true
   } else {
-    return path.join(config.served, fileSplit, fileObj.name, 'index.html')
+    file.newFilePath(path.join(config.served, fileSplit, fileObj.name, 'index.html'))
+    return true
   }
 }
 
-function styleLocation (filePath, fileObj) {
-  return path.join(config.served, 'css', fileObj.base)
+function styleLocation (filePath, fileObj, file) {
+  file.newFilePath(path.join(config.served, 'css', fileObj.base))
+  return true
 }
 
-function scriptLocation (filePath, fileObj) {
-  return path.join(config.served, 'js', fileObj.base)
+function scriptLocation (filePath, fileObj, file) {
+  file.newFilePath(path.join(config.served, 'js', fileObj.base))
+  return true
 }
