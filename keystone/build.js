@@ -5,6 +5,8 @@ const fs = require('fs-extra')
 const path = require('path')
 const recursive = require('recursive-readdir')
 
+const File = require('./builder/file.js')
+
 const ROLLUP = require('./builder/rollup.js')
 const COMPILE = require('./builder/compile.js')
 const LOCATION = require('./builder/location.js')

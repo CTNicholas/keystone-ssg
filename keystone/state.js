@@ -4,7 +4,7 @@ module.exports = {
   filesBuilt: [],
   error: false,
 
-
+  /*
   templates: {},
   addTemplate ({ fileName, filePath }) {
     if (!this.templates.hasOwnProperty(filePath)) {
@@ -15,4 +15,5 @@ module.exports = {
   clearTemplates () {
     this.templates = {}
   }
+  */
 }
