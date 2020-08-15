@@ -23,9 +23,10 @@ module.exports = function () {
     if (fileChanges) {
       serverLog.fileChange(fileChanges)
     }
+    const holdChanges = { ...fileChanges }
     fileChanges = {}
     building = true
-    runBuild().then(() => {
+    runBuild(holdChanges).then(() => {
       state.devServer.reload().then(() => {
         building = false
       })

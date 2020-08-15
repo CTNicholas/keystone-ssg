@@ -17,9 +17,12 @@ const WRITE = require('./builder/write.js')
 const logError = require('./server/log-error.js')
 const logServer = require('./server/log-server.js')
 
-module.exports = function () {
+module.exports = function (fileChanges = false) {
+  const fileChanged = newFileChanged(fileChanges)
   logServer.startBuild()
-  fs.emptyDirSync(config.served)
+  if (!fileChanges) {
+    fs.emptyDirSync(config.served)
+  }
   state.filesBuilt = []
 
   if (!fs.existsSync(config.build)) {
@@ -38,8 +41,13 @@ module.exports = function () {
       const buildPromises = []
       buildPromises.push(copyAssets())
       for (const filePath of files) {
-        const file = new File(filePath)
+        let file = state.getFile(filePath) || new File(filePath)
         if (fileChanged(file)) {
+          if (state.hasFile(file)) {
+            state.removeFile(file)
+            file = new File(filePath)
+          }
+          state.addFile(file)
           logServer.bundling(file.old.filePath)
           buildPromises.push(buildFile(file))
         }
@@ -56,30 +64,27 @@ module.exports = function () {
 async function buildFile (file) {
   try {
     state.filesBuilt.push(file.old.filePath)
-    // const fileObj = path.parse(filePath)
-    // const fileContent = fs.readFileSync(filePath, 'utf-8')
-    // const newFile = await ROLLUP(fileContent, fileObj, filePath)
     await ROLLUP(file)
-    //const finalFileContent = await COMPILE(newFile, fileObj)
     await COMPILE(file)
-    /*
-    if (file.new.filePath === null) {
-      file.newFilePath(path.normalize(path.join(fileObj.dir, newFile.fileName)))
-    }
-    */
-    // const newPath = path.normalize(path.join(fileObj.dir, newFile.fileName))
-    // const finalPath = LOCATION(newPath)
     await LOCATION(file)
-    // const finalScriptedContent = await SCRIPTS(finalFileContent, path.parse(finalPath), finalPath)
     await SCRIPTS(file)
     SEARCH.add(file)
     WRITE(file)
-    console.log(file.old.filePath, file.contains)
   } catch (err) { logError(err, { path: file.old.filePath }) }
 }
 
-function fileChanged () {
-  return true
+function newFileChanged (fileChanges) {
+  return function (file) {
+    if (!fileChanges) {
+      return true
+    }
+    for (const [num, change] of Object.entries(fileChanges)) {
+      if (change.File === file.old.filePath || file.has(change.File)) {
+        return true
+      }
+    }
+    return false
+  }
 }
 
 async function copyAssets () {

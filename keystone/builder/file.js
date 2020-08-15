@@ -20,11 +20,18 @@ module.exports = class File {
   }
 
   add (fileObj) {
-    this.contains.push(path.join(fileObj.dir, fileObj.base))
+    const filePath = path.join(fileObj.dir, fileObj.base)
+    if (!this.contains.includes(filePath)) {
+      this.contains.push(filePath)
+    }
   }
 
-  newFilePath(newPath) {
+  newFilePath (newPath) {
     this.new.filePath = newPath
     this.new.fileObj = path.parse(this.new.filePath)
+  }
+
+  has (filePath) {
+    return this.contains.includes(filePath)
   }
 }

@@ -4,7 +4,19 @@ module.exports = {
   filesBuilt: [],
   error: false,
 
-  fileStore: []
+  fileStore: [],
+  addFile (file) {
+    this.fileStore.push(file)
+  },
+  getFile (filePath) {
+    return this.fileStore.filter(file => file.old.filePath === filePath)[0] || false
+  },
+  removeFile (filePath) {
+    this.fileStore = this.fileStore.filter(file => file.old.filePath === filePath)
+  },
+  hasFile (file) {
+    return this.fileStore.includes(file)
+  }
   /*
   templates: {},
   addTemplate ({ fileName, filePath }) {

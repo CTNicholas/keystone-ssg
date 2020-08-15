@@ -2,6 +2,7 @@
 ## 1.4
 - Source maps added for CSS & JS
 - Loading bar added for dynamic links
+- Much quicker rebuilding during dev
 - Greatly improved user experience & error handling
 
 ## 1.3
