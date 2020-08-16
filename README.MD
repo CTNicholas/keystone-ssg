@@ -17,7 +17,7 @@ Create a new directory and run the following command to setup Keystone, package.
 ```
 $  npm install keystone-ssg
 ```
-Great, you're installed!
+Great, you're installed! You can update Keystone by running the same command on a current Keystone project.
 ## Development server
 Start the Keystone development server, and then go to http://localhost:8080 to see the example website.
 ```
@@ -122,6 +122,7 @@ devServerIp | The location of the dev server, **localhost**:8080. Replace with y
 watched | The directories watched by the Keystone dev server, that will force a recompilation and page refresh when files are edited | ['templates', 'pages', 'assets', 'components', 'src', 'styles']
 build | The content page directory | 'pages'
 served | The directory containing the generated website | 'public'
+fullRecompile | Force a full recompile of all files after each file change in development mode | false
 
 ## Default directory layout
 ```
@@ -138,18 +139,8 @@ served | The directory containing the generated website | 'public'
 --| package-lock.json
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+## Plugin error
+If you have a PLUGIN_ERROR after installing and running the example, this is a Babel problem, run the following command to fix it:
+```
+npm install @babel/core @babel/preset-env --save-dev
+```

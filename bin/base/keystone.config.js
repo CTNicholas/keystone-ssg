@@ -14,5 +14,6 @@ module.exports = {
     'styles'
   ],
   build: 'pages',
-  served: 'public'
+  served: 'public',
+  fullCompile: false
 }

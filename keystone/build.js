@@ -42,7 +42,7 @@ module.exports = function (fileChanges = false) {
       buildPromises.push(copyAssets())
       for (const filePath of files) {
         let file = state.getFile(filePath) || new File(filePath)
-        if (fileChanged(file)) {
+        if (config.fullRecompile || fileChanged(file)) {
           if (state.hasFile(file)) {
             state.removeFile(file)
             file = new File(filePath)

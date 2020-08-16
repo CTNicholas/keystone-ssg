@@ -5,7 +5,7 @@ const path = require('path')
 
 const exampleDirs = ['assets', 'components', 'pages', 'src', 'styles', 'templates']
 if (pathsNotExist(exampleDirs)) {
-  fs.copySync('keystone/bin/base', process.env.INIT_CWD)
+  fs.copySync('bin/base', process.env.INIT_CWD)
 } else {
   console.log('Keystone template folder(s) already exist, skipping installing example')
 }
@@ -13,8 +13,8 @@ if (pathsNotExist(exampleDirs)) {
 const gitInitDirs = ['.git', '.gitignore']
 if (pathsNotExist(gitInitDirs)) {
   fs.ensureDirSync(homePath('.git'))
-  fs.copySync('keystone/bin/git', homePath('.git'))
-  fs.copySync('keystone/bin/gitIgnore', homePath('.gitignore'))
+  fs.copySync('bin/git', homePath('.git'))
+  fs.copySync('bin/gitIgnore', homePath('.gitignore'))
 } else {
   console.log('Git already exists, skipping git init')
 }

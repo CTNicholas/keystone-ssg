@@ -5,8 +5,8 @@
   "homepage": "https://github.com/CTNicholas/keystone-ssg#readme",
   "main": "keystone/index.js",
   "scripts": {
-    "postinstall": "node ./keystone/bin/install.js",
-    "dev": "node ./keystone/scripts/minify.js"
+    "postinstall": "node ./bin/install.js",
+    "build": "node ./keystone/scripts/minify.js"
   },
   "pre-commit": "dev",
   "author": "CTNicholas",
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/CTNicholas/keystone-ssg/issues"
   },
-  "bin": "./keystone/bin/keystone.js",
+  "bin": "./bin/keystone.js",
   "dependencies": {
     "@babel/core": "^7.10.2",
     "@babel/preset-env": "^7.10.2",
@@ -36,6 +36,7 @@
     "ws": "^7.3.0"
   },
   "devDependencies": {
+    "jest": "^26.4.0",
     "pre-commit": "^1.2.2"
   },
   "keywords": [

@@ -20,6 +20,7 @@ module.exports = {
   devServerIp: 'localhost',
   fullErrors: false,
   suppressErrors: true,
+  fullRecompile: false,
   cwd: process.cwd(),
   disconnectReloadTime: 2000,
   reloadDebounce: 150,
