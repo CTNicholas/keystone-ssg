@@ -17,7 +17,7 @@ Create a new directory and run the following command to setup Keystone, package.
 ```
 $  npm install keystone-ssg
 ```
-Great, you're installed! You can update Keystone by running the same command on a current Keystone project.
+Great, you're installed!
 ## Development server
 Start the Keystone development server, and then go to http://localhost:8080 to see the example website.
 ```
@@ -91,6 +91,9 @@ Static assets are placed here, ie fonts, images, icons. Everything here will be 
 - Disable the search bar helper in keystone.config.js.
 ## Miscellaneous
 - The `public` folder is ignored by Git, remove the `public` line from `.gitignore` should you wish to use to commit it to Git.
+## Updating Keystone
+- Replace the version number in `package.json` with the version you're updating to and run `npm install keystone-ssg`, for a quick upgrade.
+
 
 # API
 ## Tags
