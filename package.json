@@ -6,9 +6,15 @@
   "main": "keystone/index.js",
   "scripts": {
     "postinstall": "node ./bin/install.js",
-    "build": "node ./keystone/scripts/minify.js"
+    "build": "node ./keystone/scripts/minify.js",
+    "test": "jest --watch --silent"
   },
-  "pre-commit": "dev",
+  "jest": {
+    "testPathIgnorePatterns": ["tests/examples/public"],
+    "testEnvironment": "node",
+    "verbose": true
+  },
+  "pre-commit": "build",
   "author": "CTNicholas",
   "license": "ISC",
   "repository": "github:CTNicholas/keystone-ssg",

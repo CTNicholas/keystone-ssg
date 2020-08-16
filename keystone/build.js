@@ -5,8 +5,6 @@ const fs = require('fs-extra')
 const path = require('path')
 const recursive = require('recursive-readdir')
 
-const File = require('./builder/file.js')
-
 const ROLLUP = require('./builder/rollup.js')
 const COMPILE = require('./builder/compile.js')
 const LOCATION = require('./builder/location.js')
@@ -16,30 +14,44 @@ const WRITE = require('./builder/write.js')
 
 const logError = require('./server/log-error.js')
 const logServer = require('./server/log-server.js')
+const File = require('./builder/file.js')
+
+const BUILD_PROCESS = [
+  ROLLUP,
+  COMPILE,
+  LOCATION,
+  SCRIPTS,
+  SEARCH.add,
+  WRITE
+]
 
 module.exports = function (fileChanges = false) {
   const fileChanged = newFileChanged(fileChanges)
-  logServer.startBuild()
-  if (!fileChanges) {
-    fs.emptyDirSync(config.served)
-  }
+  const buildPromises = []
   state.filesBuilt = []
+  logServer.startBuild()
 
   if (!fs.existsSync(config.build)) {
     fs.mkdirSync(config.build)
   }
 
+  if (!fileChanges) {
+    fs.emptyDirSync(config.served)
+    buildPromises.push(copyAssets())
+  }
+
   return new Promise((resolve, reject) => {
     recursive(config.build, async (err, files) => {
-      if (err) {
-        reject(err)
-      }
+      if (err) { reject(err) }
+
       if (files.length === 0) {
         buildSplashPage()
       }
 
-      const buildPromises = []
-      buildPromises.push(copyAssets())
+      if (assetChanged(fileChanges)) {
+        buildPromises.push(copyAssets())
+      }
+
       for (const filePath of files) {
         let file = state.getFile(filePath) || new File(filePath)
         if (config.fullRecompile || fileChanged(file)) {
@@ -49,7 +61,9 @@ module.exports = function (fileChanges = false) {
           }
           state.addFile(file)
           logServer.bundling(file.old.filePath)
-          buildPromises.push(buildFile(file))
+          state.filesBuilt.push(file.old.filePath)
+          const BUILD = buildFile(file)
+          buildPromises.push(BUILD)
         }
       }
 
@@ -63,22 +77,22 @@ module.exports = function (fileChanges = false) {
 
 async function buildFile (file) {
   try {
-    state.filesBuilt.push(file.old.filePath)
-    await ROLLUP(file)
-    await COMPILE(file)
-    await LOCATION(file)
-    await SCRIPTS(file)
-    SEARCH.add(file)
-    WRITE(file)
+    for (const process of BUILD_PROCESS) {
+      await process(file)
+    }
   } catch (err) { logError(err, { path: file.old.filePath }) }
 }
 
 function newFileChanged (fileChanges) {
+  const cancelEvents = ['add', 'unlink']
   return function (file) {
     if (!fileChanges) {
       return true
     }
     for (const [num, change] of Object.entries(fileChanges)) {
+      if (cancelEvents.includes(change.Events)) {
+        return true
+      }
       if (change.File === file.old.filePath || file.has(change.File)) {
         return true
       }
@@ -87,7 +101,16 @@ function newFileChanged (fileChanges) {
   }
 }
 
-async function copyAssets () {
+function assetChanged (fileChanges) {
+  for (const [num, change] of Object.entries(fileChanges)) {
+    if (change.File.startsWith('assets')) {
+      return true
+    }
+  }
+  return false
+}
+
+async function copyAssets (fileChanges) {
   logServer.bundling('assets')
   return await fs.copy('assets', config.served)
 }
@@ -97,4 +120,3 @@ function buildSplashPage () {
   fs.appendFileSync(path.join(config.build, 'index.html'), emptyPages)
   console.log('No index.html, default splash page built')
 }
-
