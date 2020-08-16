@@ -89,6 +89,13 @@ function newFileChanged (fileChanges) {
     if (!fileChanges) {
       return true
     }
+    const containsCss = file.contains.some(p => {
+      const fileExt = path.parse(p).ext
+      return fileExt === '.scss' || fileExt === '.sass'
+    })
+    if (containsCss) {
+      return true
+    }
     for (const [num, change] of Object.entries(fileChanges)) {
       if (cancelEvents.includes(change.Events)) {
         return true

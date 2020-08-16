@@ -121,8 +121,8 @@ async function addTemplate ({ attrs, vars, slotContent, fileName, mainFile }) {
   })
 }
 
-async function addScript ({ attrs, fileObj }) {
-  const finalScript = await addImport({ attrs }, 'src')
+async function addScript ({ attrs, fileObj, mainFile }) {
+  const finalScript = await addImport({ attrs, mainFile }, 'src')
   const filePath = checkPath(attrs, 'src')
   if (filePath) {
     const newName = path.parse(filePath).name
@@ -136,7 +136,7 @@ async function addScript ({ attrs, fileObj }) {
   return false
 }
 
-async function addStyle ({ attrs }) {
+async function addStyle ({ attrs, mainFile }) {
   const filePath = checkPath(attrs, 'styles')
   if (filePath) {
     const newName = path.parse(filePath).name
@@ -144,7 +144,8 @@ async function addStyle ({ attrs }) {
     if (!alreadyCompiled(filePath)) {
       const fileObj = path.parse(filePath)
       const fileContent = fs.readFileSync(filePath, 'utf-8')
-      const newFile = await runRollup({ old: { fileContent, fileObj, filePath }})
+      mainFile.add(fileObj)
+      const newFile = await runRollup({ old: { fileContent, fileObj, filePath }, mainFile })
       newFile.fileContent = await compiler({ compileVars: getVariables(attrs, excludedAttributes), fileContent: newFile.fileContent })
       fs.ensureDirSync(path.join(config.served, 'css'))
       fs.writeFileSync(publicPath, newFile.fileContent)
@@ -168,7 +169,7 @@ async function addImport ({ attrs, vars = {}, fileName, mainFile }, defaultDir =
       }
 
       const fileContent = fs.readFileSync(filePath, 'utf-8')
-      const newFile = await runRollup({ old: { fileContent, fileObj, filePath }})
+      const newFile = await runRollup({ old: { fileContent, fileObj, filePath }, mainFile })
       newFile.fileContent = await compiler({ compileVars: getVariables({ ...vars, ...attrs }, excludedAttributes), fileContent: newFile.fileContent, fileObj, mainFile })
       logServer.bundling(filePath)
       return newFile.fileContent

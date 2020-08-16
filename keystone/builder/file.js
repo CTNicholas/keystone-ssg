@@ -16,6 +16,7 @@ module.exports = class File {
       fileContent: null,
       sourceMap: null
     }
+    this.mainFile = null
     this.contains = []
   }
 

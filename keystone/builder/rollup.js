@@ -1,3 +1,4 @@
+const config = require('../config.js')
 const state = require('../state.js')
 const rollup = require('rollup')
 const marked = require('marked')
@@ -74,6 +75,7 @@ module.exports = function (file) {
     let finalCode
     let finalName
     let finalMap
+    let importedFiles = []
     if (result.code) {
       // SCSS/CSS file
       finalCode = result.code
@@ -87,6 +89,7 @@ module.exports = function (file) {
       finalCode = `${bundle.output[0].code}${finalMap ? `\n//# sourceMappingURL=${finalMap.toUrl()}` : ''}`
     } else {
       // Other type of file
+      importedFiles = Object.keys(bundle.output[0].modules).map(p => path.parse(path.relative(config.cwd, p))) || []
       finalName = fileObj.base
       finalMap = bundle.output[0].map || null
       if (finalMap) {
@@ -102,9 +105,16 @@ module.exports = function (file) {
       file.new.sourceMap = finalMap
       return true
     } else {
+      if (file.mainFile) {
+        importedFiles.forEach(f => file.mainFile.add(f))
+      }
       return { fileContent: finalCode, fileName: finalName, sourceMap: finalMap }
     }
   }).catch(logError)
+}
+
+function getSources (sourceMap) {
+  
 }
 
 function compileMarkdown (input) {
