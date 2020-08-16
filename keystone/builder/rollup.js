@@ -112,9 +112,10 @@ module.exports = function (file) {
     }
   }).catch(logError)
 }
+// EDIT THE ABOVE, create .contains as a tree so only top .js file is updated
 
 function getSources (sourceMap) {
-  
+  // regen json from sourceMap and get included files
 }
 
 function compileMarkdown (input) {

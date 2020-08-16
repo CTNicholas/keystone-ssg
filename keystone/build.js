@@ -89,7 +89,14 @@ function newFileChanged (fileChanges) {
     if (!fileChanges) {
       return true
     }
+
     for (const [num, change] of Object.entries(fileChanges)) {
+
+      // TEMPORARY, only speed up when main build files changed ('pages' folder)
+      if (!change.File.startsWith(config.build)) {
+        return true
+      }
+
       if (cancelEvents.includes(change.Events)) {
         return true
       }
